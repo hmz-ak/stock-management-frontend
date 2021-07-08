@@ -22,10 +22,20 @@ import Toolbar from "@material-ui/core/Toolbar";
 import ChangeHistoryIcon from "@material-ui/icons/ChangeHistory";
 import Typography from "@material-ui/core/Typography";
 import CategoryIcon from "@material-ui/icons/Category";
+import HomeIcon from "@material-ui/icons/Home";
 import { makeStyles, useTheme, alpha } from "@material-ui/core/styles";
 import Auth from "./auth/Auth";
 import Stock from "./stock/Stock";
 import userService from "./services/UserService";
+import Category from "./category/Category";
+import {
+  withRouter,
+  Switch,
+  Route,
+  Link,
+  BrowserRouter,
+} from "react-router-dom";
+import AddStock from "./stock/AddStock";
 
 const drawerWidth = 240;
 
@@ -126,7 +136,23 @@ function ResponsiveDrawer(props) {
       <div className={classes.toolbar} />
       <Divider />
       <List>
-        <ListItem button>
+        <ListItem
+          onClick={(e) => {
+            props.history.push("/");
+          }}
+          button
+        >
+          <ListItemIcon>
+            <HomeIcon />
+          </ListItemIcon>
+          <ListItemText primary="Home" />
+        </ListItem>
+        <ListItem
+          onClick={(e) => {
+            props.history.push("/addstock");
+          }}
+          button
+        >
           <ListItemIcon>
             <AddBoxIcon />
           </ListItemIcon>
@@ -150,7 +176,12 @@ function ResponsiveDrawer(props) {
           </ListItemIcon>
           <ListItemText primary="View Receipt" />
         </ListItem>
-        <ListItem button>
+        <ListItem
+          onClick={(e) => {
+            props.history.push("/addcategory");
+          }}
+          button
+        >
           <ListItemIcon>
             <CategoryIcon />
           </ListItemIcon>
@@ -254,9 +285,15 @@ function ResponsiveDrawer(props) {
             </Drawer>
           </Hidden>
         </nav>
+
         <main className={classes.content}>
           <div className={classes.toolbar} />
-          <Stock />
+
+          <Switch>
+            <Route exact path="/" render={() => <Stock />} />
+            <Route path="/addstock" render={() => <AddStock />} />
+            <Route path="/addcategory" render={() => <Category />} />
+          </Switch>
         </main>
       </div>
     </Auth>
@@ -271,4 +308,4 @@ ResponsiveDrawer.propTypes = {
   window: PropTypes.func,
 };
 
-export default ResponsiveDrawer;
+export default withRouter(ResponsiveDrawer);

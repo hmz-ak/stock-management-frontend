@@ -1,5 +1,6 @@
 import Appbar from "./components/Drawer";
 import Login from "./components/auth/Login";
+import AddStock from "./components/stock/AddStock";
 
 import {
   BrowserRouter as Router,
@@ -15,10 +16,9 @@ function App() {
     <Router>
       <div>
         <ToastContainer />
-
         <Switch>
-          <Route path="/login" component={Login} />
-          <Route path="/" component={Appbar} />
+          <Route path="/login" render={() => <Login />} />
+          <Route path="/" render={() => <Appbar />} />
         </Switch>
       </div>
     </Router>
