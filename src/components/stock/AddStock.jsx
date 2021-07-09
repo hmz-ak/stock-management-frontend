@@ -8,7 +8,7 @@ import {
   MenuItem,
   FormControl,
 } from "@material-ui/core";
-import userService from "../services/UserService";
+import stockService from "../services/StockService";
 import { toast } from "react-toastify";
 import { withRouter } from "react-router-dom";
 import Paper from "@material-ui/core/Paper";
@@ -37,13 +37,13 @@ const useStyles = makeStyles((theme) => ({
 const AddStock = (props) => {
   const classes = useStyles();
   const [name, setName] = useState("");
-  const [costPrice, setCostPrice] = useState();
-  const [salePrice, setSalePrice] = useState();
-  const [rackNumber, setRackNumber] = useState();
-  const [category, setCategory] = useState();
+  const [costPrice, setCostPrice] = useState(null);
+  const [salePrice, setSalePrice] = useState(null);
+  const [rackNumber, setRackNumber] = useState(null);
+  const [category, setCategory] = useState(null);
   const [categories, setCategories] = useState([]);
-  const [quantity, setQuantity] = useState();
-  const [itemCode, setItemCode] = useState();
+  const [stockQuantity, setQuantity] = useState(null);
+  const [itemCode, setItemCode] = useState(null);
   const [open, setOpen] = React.useState(false);
 
   const handleChange = (event) => {
@@ -129,7 +129,7 @@ const AddStock = (props) => {
           label="Enter Stock quantity"
           fullWidth
           required
-          value={quantity}
+          value={stockQuantity}
           onChange={(e) => {
             const re = /^[0-9\b]+$/;
             if (e.target.value == "" || re.test(e.target.value)) {
@@ -178,24 +178,37 @@ const AddStock = (props) => {
           color="primary"
           style={{ marginTop: 20 }}
           onClick={(e) => {
-            // if (name !== "" && password !== "") {
-            //   userService
-            //     .login(name, password)
-            //     .then((data) => {
-            //       console.log(data);
-            //       window.location.href = "/";
-            //     })
-            //     .catch((err) => {
-            //       console.log(err);
-            //       toast.error("Invalid Email or Password entered!", {
-            //         position: toast.POSITION.TOP_CENTER,
-            //       });
-            //     });
-            // } else {
-            //   toast.error("Fill All The Fields", {
-            //     position: toast.POSITION.TOP_CENTER,
-            //   });
-            // }
+            let stockData = {
+              name,
+              costPrice,
+              salePrice,
+              rackNumber,
+              category,
+              stockQuantity,
+              itemCode,
+            };
+
+            stockService
+              .addStock(stockData)
+              .then((data) => {
+                console.log(data);
+                toast.success("Data added to stock!", {
+                  position: toast.POSITION.TOP_CENTER,
+                });
+                setName("");
+                setCostPrice("");
+                setSalePrice("");
+                setRackNumber("");
+                setCategory("");
+                setQuantity("");
+                setItemCode("");
+              })
+              .catch((err) => {
+                console.log(err.response.data);
+                toast.error(err.response.data, {
+                  position: toast.POSITION.TOP_CENTER,
+                });
+              });
           }}
         >
           Add To Stock

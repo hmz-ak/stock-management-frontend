@@ -5,10 +5,9 @@ class StockService extends GenericService {
     super();
   }
 
-  getStock = () => this.get("/api/novels");
+  getStock = () => this.get("/stocks/");
   getSingleStock = (id) => this.get("/api/novels/" + id);
-  addStock = (formData, config) =>
-    this.postData("/api/novels", formData, config);
+  addStock = (data) => this.post("/stocks/", data);
   deleteStock = (_id) => this.delete("/api/novels/delete/" + _id);
   updateStock = (_id, formData, config) =>
     this.putData("/api/novels/update/" + _id, formData, config);
