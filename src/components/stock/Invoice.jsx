@@ -22,13 +22,14 @@ function total(items) {
 }
 
 export default function SpanningTable() {
-  const [reciept, setReciept] = React.useState([]);
+  const [receipt, setReceipt] = React.useState([]);
+  const [discount, setDiscount] = React.useState("0");
   const classes = useStyles();
   useEffect(() => {
-    let arr = JSON.parse(localStorage.getItem("reciept"));
-    setReciept(arr);
+    let arr = JSON.parse(localStorage.getItem("receipt"));
+    setReceipt(arr);
     console.log(arr);
-    console.log(reciept);
+    console.log(receipt);
   }, []);
   return (
     <TableContainer component={Paper}>
@@ -46,32 +47,38 @@ export default function SpanningTable() {
           </TableRow>
         </TableHead>
         <TableBody>
-          {reciept == null ? (
-            <p>You Have not added any items to the reciept!</p>
+          {receipt == null ? (
+            <p>You Have not added any items to the receipt!</p>
           ) : (
             <>
-              {reciept.map((row) => (
+              {receipt.map((row) => (
                 <TableRow key={row.itemCode}>
                   <TableCell>{row.itemCode}</TableCell>
                   <TableCell align="right">{row.name}</TableCell>
                   <TableCell style={{ width: 100 }} align="right">
                     <EditText
                       onSave={(value) => {
-                        let tempp = "";
-                        let item = JSON.parse(localStorage.getItem("reciept"));
-                        row.price = value.value;
+                        let item = JSON.parse(localStorage.getItem("receipt"));
+
                         for (let i = 0; i < item.length; i++) {
-                          // console.log(item[i]);
-                          // console.log(row);
                           if (row.itemCode == item[i].itemCode) {
                             item[i].price = value.value;
                             item[i].total = item[i].quantity * value.value;
-                            item[i].disc = 0;
-                            item[i].discounted = 0;
+                            if (row.disc == 0) {
+                              item[i].total = item[i].quantity * item[i].price;
+                            } else {
+                              item[i].discounted =
+                                ((item[i].price * item[i].quantity) / 100) *
+                                item[i].disc;
+                              item[i].total =
+                                item[i].quantity * item[i].price -
+                                item[i].discounted;
+                            }
+                            console.log(item[i].disc);
                           }
                         }
-                        localStorage.setItem("reciept", JSON.stringify(item));
-                        setReciept(item);
+                        localStorage.setItem("receipt", JSON.stringify(item));
+                        setReceipt(item);
                         console.log(item);
                       }}
                       type="number"
@@ -82,20 +89,25 @@ export default function SpanningTable() {
                     <EditText
                       onSave={(value) => {
                         let tempp = "";
-                        let item = JSON.parse(localStorage.getItem("reciept"));
-                        row.price = value.value;
+                        let item = JSON.parse(localStorage.getItem("receipt"));
+
                         for (let i = 0; i < item.length; i++) {
-                          // console.log(item[i]);
-                          // console.log(row);
                           if (row.itemCode == item[i].itemCode) {
                             item[i].quantity = value.value;
-                            item[i].total = item[i].quantity * item[i].price;
-                            item[i].discounted = 0;
-                            item[i].disc = 0;
+                            if (row.disc == 0) {
+                              item[i].total = item[i].quantity * item[i].price;
+                            } else {
+                              item[i].discounted =
+                                ((item[i].price * item[i].quantity) / 100) *
+                                item[i].disc;
+                              item[i].total =
+                                item[i].quantity * item[i].price -
+                                item[i].discounted;
+                            }
                           }
                         }
-                        localStorage.setItem("reciept", JSON.stringify(item));
-                        setReciept(item);
+                        localStorage.setItem("receipt", JSON.stringify(item));
+                        setReceipt(item);
                         console.log(item);
                       }}
                       type="number"
@@ -105,39 +117,29 @@ export default function SpanningTable() {
                   <TableCell style={{ width: 100 }} align="right">
                     <EditText
                       onSave={(value) => {
-                        let item = JSON.parse(localStorage.getItem("reciept"));
-                        row.price = value.value;
+                        let item = JSON.parse(localStorage.getItem("receipt"));
+
                         for (let i = 0; i < item.length; i++) {
-                          // console.log(item[i]);
-                          // console.log(row);
                           if (row.itemCode == item[i].itemCode) {
+                            console.log(value.value);
                             item[i].disc = value.value;
                             item[i].discounted =
                               ((item[i].price * item[i].quantity) / 100) *
-                              value.value;
+                              item[i].disc;
                             item[i].total =
                               item[i].price * item[i].quantity -
                               item[i].discounted;
                           }
                         }
-                        localStorage.setItem("reciept", JSON.stringify(item));
-                        setReciept(item);
-                        console.log(item);
+                        localStorage.setItem("receipt", JSON.stringify(item));
+                        setReceipt(item);
                       }}
-                      type="number"
-                      defaultValue={row.quantity}
+                      defaultValue={row.disc}
                     />
                   </TableCell>
                   <TableCell align="right">{row.discounted}</TableCell>
                   <TableCell align="right">{row.total}</TableCell>
                   <TableCell align="right">
-                    {/* <Button
-                  size="small"
-                  style={{ backgroundColor: "gold", marginRight: 5 }}
-                  variant="contained"
-                >
-                  Edit
-                </Button> */}
                     <Button size="small" variant="contained" color="secondary">
                       Remove
                     </Button>
@@ -147,7 +149,7 @@ export default function SpanningTable() {
 
               <TableRow>
                 <TableCell colSpan={6}>Total</TableCell>
-                <TableCell align="right">{total(reciept)}</TableCell>
+                <TableCell align="right">{total(receipt)}</TableCell>
               </TableRow>
             </>
           )}

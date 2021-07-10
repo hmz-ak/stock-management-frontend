@@ -22,6 +22,7 @@ import stockService from "../services/StockService";
 import TextField from "@material-ui/core/TextField";
 import { Button } from "@material-ui/core";
 import { EndOfLineState } from "typescript";
+import { SettingsBluetoothOutlined } from "@material-ui/icons";
 
 const useStyles = makeStyles({
   table: {
@@ -122,6 +123,7 @@ export default function BasicTable() {
   const [quan, setQuan] = React.useState(null);
   const [quan2, setQuan2] = React.useState(null);
   const [id, setId] = React.useState();
+  const [bool, setBool] = React.useState(false);
 
   const classes = useStyles();
   const classes2 = useStyles2();
@@ -185,7 +187,7 @@ export default function BasicTable() {
                 <TableCell align="left">Quantity</TableCell>
                 <TableCell align="left">Category</TableCell>
                 <TableCell align="left">Rack No.</TableCell>
-                <TableCell align="left">Add to Reciept</TableCell>
+                <TableCell align="left">Add to Receipt</TableCell>
               </TableRow>
             </TableHead>
             <TableBody>
@@ -222,6 +224,7 @@ export default function BasicTable() {
                     <Button
                       onClick={() => {
                         let arr = {
+                          id: row._id,
                           itemCode: row.itemCode,
                           name: row.name,
                           disc: 0,
@@ -246,24 +249,50 @@ export default function BasicTable() {
                             position: toast.POSITION.TOP_CENTER,
                           });
                         } else {
-                          if (localStorage.getItem("reciept") == null) {
-                            localStorage.setItem("reciept", "[]");
+                          if (localStorage.getItem("receipt") == null) {
+                            localStorage.setItem("receipt", "[]");
                           }
 
-                          if (arr) {
+                          if (arr.id) {
                             var old_data = JSON.parse(
-                              localStorage.getItem("reciept")
+                              localStorage.getItem("receipt")
                             );
-
-                            old_data.push(arr);
-                            toast.success("Item added to reciept", {
-                              position: toast.POSITION.TOP_CENTER,
+                            var filterArray = old_data.filter(function (item) {
+                              console.log(item);
+                              console.log(item.id);
+                              console.log(arr.id);
+                              if (item.id == arr.id) {
+                                return item;
+                              } else {
+                                return null;
+                              }
                             });
+                            console.log(filterArray);
+                            if (filterArray.length == 0) {
+                              old_data.push(arr);
+                              toast.info("Added to Receipt", {
+                                position: toast.POSITION.TOP_CENTER,
+                              });
+                            } else {
+                              toast.warning(
+                                "You have already added this item into receipt",
+                                {
+                                  position: toast.POSITION.TOP_CENTER,
+                                }
+                              );
+                              // console.log("already added to cart");
+                            }
+
+                            //   old_data.push(arr);
+                            //   toast.success("Item added to receipt", {
+                            //     position: toast.POSITION.TOP_CENTER,
+                            //   });
+                            // }
+                            localStorage.setItem(
+                              "receipt",
+                              JSON.stringify(old_data)
+                            );
                           }
-                          localStorage.setItem(
-                            "reciept",
-                            JSON.stringify(old_data)
-                          );
                         }
 
                         setQuan(null);
@@ -275,7 +304,7 @@ export default function BasicTable() {
                       variant="outlined"
                       color="primary"
                     >
-                      Add to Reciept
+                      Add to Receipt
                     </Button>
                   </TableCell>
                 </TableRow>
