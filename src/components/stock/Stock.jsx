@@ -178,14 +178,14 @@ export default function BasicTable() {
             <TableHead>
               <TableRow>
                 <TableCell>Item Code</TableCell>
-                <TableCell align="right">Stock</TableCell>
+                <TableCell align="left">Stock</TableCell>
 
-                <TableCell align="right">Name</TableCell>
-                <TableCell align="right">Price</TableCell>
-                <TableCell align="right">Quantity</TableCell>
-                <TableCell align="right">Category</TableCell>
-                <TableCell align="right">Rack No.</TableCell>
-                <TableCell align="right">Add to Reciept</TableCell>
+                <TableCell align="left">Name</TableCell>
+                <TableCell align="left">Price</TableCell>
+                <TableCell align="left">Quantity</TableCell>
+                <TableCell align="left">Category</TableCell>
+                <TableCell align="left">Rack No.</TableCell>
+                <TableCell align="left">Add to Reciept</TableCell>
               </TableRow>
             </TableHead>
             <TableBody>
@@ -201,10 +201,10 @@ export default function BasicTable() {
                     {row.itemCode}
                   </TableCell>
 
-                  <TableCell align="right">{row.stockQuantity}</TableCell>
-                  <TableCell align="right">{row.name}</TableCell>
-                  <TableCell align="right">{row.salePrice}</TableCell>
-                  <TableCell align="right">
+                  <TableCell align="left">{row.stockQuantity}</TableCell>
+                  <TableCell align="left">{row.name}</TableCell>
+                  <TableCell align="left">{row.salePrice}</TableCell>
+                  <TableCell align="left">
                     <TextField
                       className={classes2.root}
                       id={row._id}
@@ -216,14 +216,16 @@ export default function BasicTable() {
                       }}
                     />
                   </TableCell>
-                  <TableCell align="right">{row.category}</TableCell>
-                  <TableCell align="right">{row.rackNumber}</TableCell>
-                  <TableCell align="right">
+                  <TableCell align="left">{row.category}</TableCell>
+                  <TableCell align="left">{row.rackNumber}</TableCell>
+                  <TableCell align="left">
                     <Button
                       onClick={() => {
                         let arr = {
                           itemCode: row.itemCode,
                           name: row.name,
+                          disc: 0,
+                          discounted: 0,
                           price: row.salePrice,
                           total: row.salePrice * quan,
                           quantity: quan,
@@ -266,7 +268,9 @@ export default function BasicTable() {
 
                         setQuan(null);
                         setQuan2(null);
-                        document.getElementById(id).value = "";
+                        if (quan != null) {
+                          document.getElementById(id).value = "";
+                        }
                       }}
                       variant="outlined"
                       color="primary"

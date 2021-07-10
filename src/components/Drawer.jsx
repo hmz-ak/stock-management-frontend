@@ -26,6 +26,7 @@ import HomeIcon from "@material-ui/icons/Home";
 import { makeStyles, useTheme, alpha } from "@material-ui/core/styles";
 import Auth from "./auth/Auth";
 import Stock from "./stock/Stock";
+import Invoice from "./stock/Invoice";
 import userService from "./services/UserService";
 import Category from "./category/Category";
 import {
@@ -170,7 +171,12 @@ function ResponsiveDrawer(props) {
           </ListItemIcon>
           <ListItemText primary="Sale Report" />
         </ListItem>
-        <ListItem button>
+        <ListItem
+          onClick={() => {
+            props.history.push("/invoice");
+          }}
+          button
+        >
           <ListItemIcon>
             <ReceiptIcon />
           </ListItemIcon>
@@ -293,6 +299,7 @@ function ResponsiveDrawer(props) {
             <Route exact path="/" render={() => <Stock />} />
             <Route path="/addstock" render={() => <AddStock />} />
             <Route path="/addcategory" render={() => <Category />} />
+            <Route path="/invoice" render={() => <Invoice />} />
           </Switch>
         </main>
       </div>
