@@ -37,6 +37,10 @@ import {
   BrowserRouter,
 } from "react-router-dom";
 import AddStock from "./stock/AddStock";
+import ViewStock from "./stock/ViewStock";
+import EditStock from "./stock/EditStock";
+import ViewCategory from "./category/ViewCategory";
+import EditCategory from "./category/EditCategory";
 
 const drawerWidth = 240;
 
@@ -136,7 +140,7 @@ function ResponsiveDrawer(props) {
     <div>
       <div className={classes.toolbar} />
       <Divider />
-      <List>
+      <List id="no-print">
         <ListItem
           onClick={(e) => {
             props.history.push("/");
@@ -159,11 +163,16 @@ function ResponsiveDrawer(props) {
           </ListItemIcon>
           <ListItemText primary="Add Stock" />
         </ListItem>
-        <ListItem button>
+        <ListItem
+          onClick={() => {
+            props.history.push("/viewStock");
+          }}
+          button
+        >
           <ListItemIcon>
             <StoreIcon />
           </ListItemIcon>
-          <ListItemText primary="View Stock" />
+          <ListItemText primary="Edit Stock" />
         </ListItem>
         <ListItem button>
           <ListItemIcon>
@@ -193,11 +202,11 @@ function ResponsiveDrawer(props) {
           </ListItemIcon>
           <ListItemText primary="Add Category" />
         </ListItem>
-        <ListItem button>
+        <ListItem onClick={() => props.history.push("/viewCategory")} button>
           <ListItemIcon>
             <ChangeHistoryIcon />
           </ListItemIcon>
-          <ListItemText primary="View Category" />
+          <ListItemText primary="Edit Category" />
         </ListItem>
       </List>
       <Divider />
@@ -210,10 +219,10 @@ function ResponsiveDrawer(props) {
           }}
           button
         >
-          <ListItemIcon>
+          <ListItemIcon id="no-print">
             <ExitToAppIcon />
           </ListItemIcon>
-          <ListItemText primary="Logout" />
+          <ListItemText id="no-print" primary="Logout" />
         </ListItem>
       </List>
     </div>
@@ -226,7 +235,7 @@ function ResponsiveDrawer(props) {
     <Auth>
       <div className={classes.root}>
         <CssBaseline />
-        <AppBar position="fixed" className={classes.appBar}>
+        <AppBar id="no-print" position="fixed" className={classes.appBar}>
           <Toolbar>
             <IconButton
               color="inherit"
@@ -300,6 +309,10 @@ function ResponsiveDrawer(props) {
             <Route path="/addstock" render={() => <AddStock />} />
             <Route path="/addcategory" render={() => <Category />} />
             <Route path="/invoice" render={() => <Invoice />} />
+            <Route path="/viewStock" render={() => <ViewStock />} />
+            <Route path="/editStock/:id" render={() => <EditStock />} />
+            <Route path="/viewCategory" render={() => <ViewCategory />} />
+            <Route path="/editCategory/:id" render={() => <EditCategory />} />
           </Switch>
         </main>
       </div>

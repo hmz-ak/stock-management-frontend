@@ -20,9 +20,10 @@ import TableFooter from "@material-ui/core/TableFooter";
 import FirstPageIcon from "@material-ui/icons/FirstPage";
 import stockService from "../services/StockService";
 import TextField from "@material-ui/core/TextField";
-import { Button } from "@material-ui/core";
+import { Button, ButtonGroup } from "@material-ui/core";
 import { EndOfLineState } from "typescript";
 import { SettingsBluetoothOutlined } from "@material-ui/icons";
+import { withRouter } from "react-router-dom";
 
 const useStyles = makeStyles({
   table: {
@@ -115,7 +116,7 @@ TablePaginationActions.propTypes = {
   rowsPerPage: PropTypes.number.isRequired,
 };
 
-export default function BasicTable() {
+const ViewStock = (props) => {
   const [rows, setRows] = useState([]);
   const [rowsAfterSearch, setRowsAfterSearch] = useState([]);
   const [searched, setSearched] = useState("");
@@ -182,16 +183,14 @@ export default function BasicTable() {
             <TableHead>
               <TableRow>
                 <TableCell>Item Code</TableCell>
-
                 <TableCell align="left">Name</TableCell>
-                <TableCell align="left">Price</TableCell>
+
+                <TableCell align="left">Cost Price</TableCell>
+                <TableCell align="left">Sale Price</TableCell>
+                <TableCell align="left">Stock Quantity</TableCell>
                 <TableCell align="left">Rack No.</TableCell>
-
-                <TableCell align="left">Quantity</TableCell>
                 <TableCell align="left">Category</TableCell>
-                <TableCell align="left">Stock</TableCell>
-
-                <TableCell align="left">Add to Receipt</TableCell>
+                <TableCell align="left">Edit/Delete</TableCell>
               </TableRow>
             </TableHead>
             <TableBody>
@@ -202,121 +201,51 @@ export default function BasicTable() {
                   )
                 : rows
               ).map((row) => (
-                <TableRow key={row.name}>
+                <TableRow key={row._id}>
                   <TableCell component="th" scope="row">
                     {row.itemCode}
                   </TableCell>
 
                   <TableCell align="left">{row.name}</TableCell>
+                  <TableCell align="left">{row.costPrice}</TableCell>
                   <TableCell align="left">{row.salePrice}</TableCell>
-                  <TableCell align="left">{row.rackNumber}</TableCell>
 
-                  <TableCell align="left">
-                    <TextField
-                      className={classes2.root}
-                      id={row._id}
-                      variant="outlined"
-                      required
-                      onChange={(e) => {
-                        setId(row._id);
-                        setQuan(e.target.value);
-                      }}
-                    />
-                  </TableCell>
-                  <TableCell align="left">{row.category}</TableCell>
                   <TableCell align="left">{row.stockQuantity}</TableCell>
-
+                  <TableCell align="left">{row.rackNumber}</TableCell>
+                  <TableCell align="left">{row.category}</TableCell>
                   <TableCell align="left">
-                    <Button
-                      style={{
-                        fontSize: 12,
-                        backgroundColor: "#3C5186",
-                        color: "white",
-                      }}
-                      onClick={() => {
-                        let arr = {
-                          id: row._id,
-                          itemCode: row.itemCode,
-                          name: row.name,
-                          disc: 0,
-                          discounted: 0,
-                          price: row.salePrice,
-                          total: row.salePrice * quan,
-                          quantity: quan,
-                          category: row.category,
-                          stock: row.stockQuantity,
-                        };
-
-                        if (quan > row.stockQuantity) {
-                          let temp =
-                            "Remaining Stock for the Item " +
-                            row.name +
-                            " is " +
-                            row.stockQuantity;
-                          toast.error(temp, {
-                            position: toast.POSITION.TOP_CENTER,
-                          });
-                        } else if (quan == null) {
-                          toast.warning("Please Enter Quantity", {
-                            position: toast.POSITION.TOP_CENTER,
-                          });
-                        } else {
-                          if (localStorage.getItem("receipt") == null) {
-                            localStorage.setItem("receipt", "[]");
-                          }
-
-                          if (arr.id) {
-                            var old_data = JSON.parse(
-                              localStorage.getItem("receipt")
-                            );
-                            var filterArray = old_data.filter(function (item) {
-                              console.log(item);
-                              console.log(item.id);
-                              console.log(arr.id);
-                              if (item.id == arr.id) {
-                                return item;
-                              } else {
-                                return null;
-                              }
-                            });
-                            console.log(filterArray);
-                            if (filterArray.length == 0) {
-                              old_data.push(arr);
-                              toast.info("Added to Receipt", {
-                                position: toast.POSITION.TOP_CENTER,
-                              });
-                            } else {
-                              toast.warning(
-                                "You have already added this item into receipt",
-                                {
+                    <ButtonGroup disableElevation variant="contained">
+                      <Button
+                        onClick={(e) => {
+                          props.history.push("/editStock/" + row._id);
+                        }}
+                        style={{ backgroundColor: "gold" }}
+                      >
+                        Edit
+                      </Button>
+                      <Button
+                        onClick={(e) => {
+                          if (window.confirm("Press Ok to confirm deletion")) {
+                            stockService
+                              .deleteStock(row._id)
+                              .then((data) => {
+                                toast.success("deleted Successfully", {
                                   position: toast.POSITION.TOP_CENTER,
-                                }
-                              );
-                              // console.log("already added to cart");
-                            }
-
-                            //   old_data.push(arr);
-                            //   toast.success("Item added to receipt", {
-                            //     position: toast.POSITION.TOP_CENTER,
-                            //   });
-                            // }
-                            localStorage.setItem(
-                              "receipt",
-                              JSON.stringify(old_data)
-                            );
+                                });
+                                props.history.push("/");
+                              })
+                              .catch((err) => {
+                                console.log(err);
+                              });
+                          } else {
+                            // They clicked no
                           }
-                        }
-
-                        setQuan(null);
-                        setQuan2(null);
-                        if (quan != null) {
-                          document.getElementById(id).value = "";
-                        }
-                      }}
-                      variant="contained"
-                    >
-                      Add to Receipt
-                    </Button>
+                        }}
+                        style={{ backgroundColor: "red", color: "white" }}
+                      >
+                        Delete
+                      </Button>
+                    </ButtonGroup>
                   </TableCell>
                 </TableRow>
               ))}
@@ -351,4 +280,6 @@ export default function BasicTable() {
       <br />
     </>
   );
-}
+};
+
+export default withRouter(ViewStock);

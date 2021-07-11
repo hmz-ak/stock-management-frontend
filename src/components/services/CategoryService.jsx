@@ -6,11 +6,10 @@ class CategoryService extends GenericService {
   }
 
   getCategory = () => this.get("/categories/");
-  getSingleCategory = (id) => this.get("/api/novels/" + id);
+  getSingleCategory = (id) => this.get("/categories/" + id);
   addCategory = (name) => this.post("/categories/", { name });
-  deleteStock = (_id) => this.delete("/api/novels/delete/" + _id);
-  updateStock = (_id, formData, config) =>
-    this.putData("/api/novels/update/" + _id, formData, config);
+  deleteCategory = (_id) => this.delete("/categories/" + _id);
+  updateCategory = (id, name) => this.put("/categories/" + id, name);
   // getStories = () => this.get("/api/novels/mystories");
   // getCart = (formData, config) => this.post("/api/novels/cart", formData);
   // addCart = (formData, config) =>
