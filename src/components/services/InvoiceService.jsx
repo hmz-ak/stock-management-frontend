@@ -5,9 +5,11 @@ class InvoiceService extends GenericService {
     super();
   }
 
-  getInvoice = () => this.get("/categories/");
-  getSingleInvoice = (id) => this.get("/api/novels/" + id);
-  addInvoice = (name, data) => this.post("/sales/", { name, data });
+  getInvoice = () => this.get("/sales/");
+  Profit = (data) => this.Data("/sales/profit/", data);
+  getSingleInvoice = (id) => this.get("/sales/" + id);
+  addInvoice = (costPriceTotal, salePriceTotal, name, data) =>
+    this.post("/sales/", { costPriceTotal, salePriceTotal, name, data });
   deleteInvoice = (_id) => this.delete("/api/novels/delete/" + _id);
   updateInvoice = (_id, formData, config) =>
     this.putData("/api/novels/update/" + _id, formData, config);

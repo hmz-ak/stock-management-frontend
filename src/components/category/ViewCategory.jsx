@@ -156,6 +156,8 @@ const ViewCategory = (props) => {
   };
 
   const requestSearch = (searchedVal) => {
+    console.log(rowsAfterSearch);
+
     const filteredRows = rowsAfterSearch.filter((row) => {
       return row.name.toLowerCase().includes(searchedVal.toLowerCase());
     });

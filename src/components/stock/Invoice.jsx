@@ -29,6 +29,9 @@ const useStyles = makeStyles({
 function total(items) {
   return items.map(({ total }) => total).reduce((sum, i) => sum + i, 0);
 }
+function total2(items) {
+  return items.map(({ totalCost }) => totalCost).reduce((sum, i) => sum + i, 0);
+}
 function printReceipt() {
   window.print();
 }
@@ -45,7 +48,9 @@ export default function SpanningTable() {
   const [receipt, setReceipt] = React.useState([]);
   const [discount, setDiscount] = React.useState("0");
   const [customerName, setCustomerName] = React.useState("");
+
   const classes = useStyles();
+
   useEffect(() => {
     let arr = JSON.parse(localStorage.getItem("receipt"));
     setReceipt(arr);
@@ -79,11 +84,15 @@ export default function SpanningTable() {
           placeholder="Enter Customer Name here"
           onSave={({ value }) => {
             localStorage.setItem("customer_name", JSON.stringify(value));
-            setCustomerName(value);
-            console.log(customerName);
+            setCustomerName(value ? value : "");
+            console.log(value);
           }}
           type="text"
-          defaultValue={JSON.parse(localStorage.getItem("customer_name"))}
+          defaultValue={
+            localStorage.getItem("customer_name")
+              ? JSON.parse(localStorage.getItem("customer_name"))
+              : ""
+          }
         />
       </div>
       <br />
@@ -166,6 +175,8 @@ export default function SpanningTable() {
                               if (row.disc == 0) {
                                 item[i].total =
                                   item[i].quantity * item[i].price;
+                                item[i].totalCost =
+                                  item[i].cost * item[i].quantity;
                               } else {
                                 item[i].discounted =
                                   ((item[i].price * item[i].quantity) / 100) *
@@ -242,6 +253,9 @@ export default function SpanningTable() {
               <TableRow>
                 <TableCell colSpan={6}>Total</TableCell>
                 <TableCell align="right">{total(receipt)}</TableCell>
+
+                {localStorage.setItem("salePriceTotal", total(receipt))}
+                {localStorage.setItem("costPriceTotal", total2(receipt))}
               </TableRow>
             </>
           )}
@@ -264,29 +278,31 @@ export default function SpanningTable() {
           variant="contained"
           id="no-print"
           onClick={() => {
-            let data = JSON.parse(localStorage.getItem("receipt"));
-            let name = JSON.parse(localStorage.getItem("customer_name"));
-
-            if (data.length == 0 || data == null || data === " ") {
-              toast.info("You have not added anything to the invoice!", {
-                position: toast.POSITION.TOP_CENTER,
-              });
-            } else {
-              console.log(data);
-              invoiceService
-                .addInvoice(name, data)
-                .then((data) => {
-                  console.log(data);
-                  toast.success("Done!", {
-                    position: toast.POSITION.TOP_CENTER,
-                  });
-                  localStorage.setItem("receipt", "[]");
-                  setReceipt([]);
-                  JSON.stringify(localStorage.setItem("customer_name", ""));
-                  setCustomerName("");
-                })
-                .catch((err) => console.log(err));
-            }
+            JSON.parse(localStorage.getItem("receipt")) != "" &&
+            JSON.parse(localStorage.getItem("receipt"))
+              ? invoiceService
+                  .addInvoice(
+                    JSON.parse(localStorage.getItem("costPriceTotal")),
+                    JSON.parse(localStorage.getItem("salePriceTotal")),
+                    customerName,
+                    JSON.parse(localStorage.getItem("receipt"))
+                  )
+                  .then((data) => {
+                    console.log(data);
+                    toast.success("Done!", {
+                      position: toast.POSITION.TOP_CENTER,
+                    });
+                    localStorage.setItem("receipt", "[]");
+                    setReceipt([]);
+                    JSON.stringify(localStorage.setItem("customer_name", ""));
+                    JSON.stringify(localStorage.setItem("costPriceTotal", 0));
+                    JSON.stringify(localStorage.setItem("salePriceTotal", 0));
+                    setCustomerName("");
+                  })
+                  .catch((err) => console.log(err))
+              : toast.info("You have not added anything to the invoice!", {
+                  position: toast.POSITION.TOP_CENTER,
+                });
           }}
         >
           Add To Record

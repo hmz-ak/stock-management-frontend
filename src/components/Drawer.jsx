@@ -41,6 +41,10 @@ import ViewStock from "./stock/ViewStock";
 import EditStock from "./stock/EditStock";
 import ViewCategory from "./category/ViewCategory";
 import EditCategory from "./category/EditCategory";
+import Index from "./saleReport/Index";
+import Sales from "./saleReport/Sales";
+import GetInvoice from "./saleReport/GetInvoice";
+import ViewProfit from "./saleReport/ViewProfit";
 
 const drawerWidth = 240;
 
@@ -174,7 +178,7 @@ function ResponsiveDrawer(props) {
           </ListItemIcon>
           <ListItemText primary="Edit Stock" />
         </ListItem>
-        <ListItem button>
+        <ListItem onClick={() => props.history.push("/saleReport")} button>
           <ListItemIcon>
             <AssessmentIcon />
           </ListItemIcon>
@@ -313,6 +317,10 @@ function ResponsiveDrawer(props) {
             <Route path="/editStock/:id" render={() => <EditStock />} />
             <Route path="/viewCategory" render={() => <ViewCategory />} />
             <Route path="/editCategory/:id" render={() => <EditCategory />} />
+            <Route path="/saleReport" render={() => <Index />} />
+            <Route path="/sales" render={() => <Sales />} />
+            <Route path="/getInvoice/:id" render={() => <GetInvoice />} />
+            <Route path="/viewProfit" render={() => <ViewProfit />} />
           </Switch>
         </main>
       </div>

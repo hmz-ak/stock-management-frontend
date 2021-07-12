@@ -17,6 +17,18 @@ class GenericService {
         });
     });
 
+  Data = (url, data) =>
+    new Promise((resolve, reject) => {
+      axios
+        .post(url, data)
+        .then((res) => {
+          resolve(res.data);
+        })
+        .catch((err) => {
+          reject(err);
+        });
+    });
+
   post = (url, data) =>
     new Promise((resolve, reject) => {
       // console.log(data.get("cart_data"));

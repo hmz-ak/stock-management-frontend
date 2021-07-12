@@ -18,11 +18,12 @@ import LastPageIcon from "@material-ui/icons/LastPage";
 import IconButton from "@material-ui/core/IconButton";
 import TableFooter from "@material-ui/core/TableFooter";
 import FirstPageIcon from "@material-ui/icons/FirstPage";
-import stockService from "../services/StockService";
+import invoiceService from "../services/InvoiceService";
 import TextField from "@material-ui/core/TextField";
-import { Button } from "@material-ui/core";
+import { Button, ButtonGroup } from "@material-ui/core";
 import { EndOfLineState } from "typescript";
 import { SettingsBluetoothOutlined } from "@material-ui/icons";
+import { withRouter } from "react-router-dom";
 
 const useStyles = makeStyles({
   table: {
@@ -115,7 +116,7 @@ TablePaginationActions.propTypes = {
   rowsPerPage: PropTypes.number.isRequired,
 };
 
-export default function BasicTable() {
+const Sales = (props) => {
   const [rows, setRows] = useState([]);
   const [rowsAfterSearch, setRowsAfterSearch] = useState([]);
   const [searched, setSearched] = useState("");
@@ -130,13 +131,11 @@ export default function BasicTable() {
   const classes2 = useStyles2();
 
   useEffect(() => {
-    stockService
-      .getStock()
+    invoiceService
+      .getInvoice()
       .then((data) => {
         setRows(data);
         setRowsAfterSearch(data);
-        console.log(data);
-        console.log(rows);
       })
       .catch((err) => {
         console.log(err);
@@ -155,9 +154,12 @@ export default function BasicTable() {
   };
 
   const requestSearch = (searchedVal) => {
+    console.log(rowsAfterSearch);
     const filteredRows = rowsAfterSearch.filter((row) => {
-      return row.name.toLowerCase().includes(searchedVal.toLowerCase());
+      console.log(row);
+      return row.customerName.toLowerCase().includes(searchedVal.toLowerCase());
     });
+    console.log(filteredRows);
     setRows(filteredRows);
   };
 
@@ -181,17 +183,9 @@ export default function BasicTable() {
           <Table className={classes.table} aria-label="simple table">
             <TableHead>
               <TableRow>
-                <TableCell>Item Code</TableCell>
-
-                <TableCell align="left">Name</TableCell>
-                <TableCell align="left">Price</TableCell>
-                <TableCell align="left">Rack No.</TableCell>
-
-                <TableCell align="left">Quantity</TableCell>
-                <TableCell align="left">Category</TableCell>
-                <TableCell align="left">Stock</TableCell>
-
-                <TableCell align="left">Add to Receipt</TableCell>
+                <TableCell align="left">Invoice ID</TableCell>
+                <TableCell align="left">Customer Name</TableCell>
+                <TableCell align="left">View Invoice</TableCell>
               </TableRow>
             </TableHead>
             <TableBody>
@@ -202,122 +196,19 @@ export default function BasicTable() {
                   )
                 : rows
               ).map((row) => (
-                <TableRow key={row.name}>
-                  <TableCell component="th" scope="row">
-                    {row.itemCode}
-                  </TableCell>
-
-                  <TableCell align="left">{row.name}</TableCell>
-                  <TableCell align="left">{row.salePrice}</TableCell>
-                  <TableCell align="left">{row.rackNumber}</TableCell>
-
-                  <TableCell align="left">
-                    <TextField
-                      className={classes2.root}
-                      id={row._id}
-                      variant="outlined"
-                      required
-                      onChange={(e) => {
-                        setId(row._id);
-                        setQuan(e.target.value);
-                      }}
-                    />
-                  </TableCell>
-                  <TableCell align="left">{row.category}</TableCell>
-                  <TableCell align="left">{row.stockQuantity}</TableCell>
+                <TableRow key={row._id}>
+                  <TableCell align="left">{row._id}</TableCell>
+                  <TableCell align="left">{row.customerName}</TableCell>
 
                   <TableCell align="left">
                     <Button
-                      style={{
-                        fontSize: 12,
-                        backgroundColor: "#3C5186",
-                        color: "white",
+                      onClick={(e) => {
+                        console.log(row._id);
+                        props.history.push("/getInvoice/" + row._id);
                       }}
-                      onClick={() => {
-                        let arr = {
-                          id: row._id,
-                          itemCode: row.itemCode,
-                          name: row.name,
-                          disc: 0,
-                          discounted: 0,
-                          price: row.salePrice,
-                          total: row.salePrice * quan,
-                          quantity: quan,
-                          category: row.category,
-                          stock: row.stockQuantity,
-                          cost: row.costPrice,
-                          totalCost: row.costPrice * quan,
-                        };
-
-                        if (quan > row.stockQuantity) {
-                          let temp =
-                            "Remaining Stock for the Item " +
-                            row.name +
-                            " is " +
-                            row.stockQuantity;
-                          toast.error(temp, {
-                            position: toast.POSITION.TOP_CENTER,
-                          });
-                        } else if (quan == null) {
-                          toast.warning("Please Enter Quantity", {
-                            position: toast.POSITION.TOP_CENTER,
-                          });
-                        } else {
-                          if (localStorage.getItem("receipt") == null) {
-                            localStorage.setItem("receipt", "[]");
-                          }
-
-                          if (arr.id) {
-                            var old_data = JSON.parse(
-                              localStorage.getItem("receipt")
-                            );
-                            var filterArray = old_data.filter(function (item) {
-                              console.log(item);
-                              console.log(item.id);
-                              console.log(arr.id);
-                              if (item.id == arr.id) {
-                                return item;
-                              } else {
-                                return null;
-                              }
-                            });
-                            console.log(filterArray);
-                            if (filterArray.length == 0) {
-                              old_data.push(arr);
-                              toast.info("Added to Receipt", {
-                                position: toast.POSITION.TOP_CENTER,
-                              });
-                            } else {
-                              toast.warning(
-                                "You have already added this item into receipt",
-                                {
-                                  position: toast.POSITION.TOP_CENTER,
-                                }
-                              );
-                              // console.log("already added to cart");
-                            }
-
-                            //   old_data.push(arr);
-                            //   toast.success("Item added to receipt", {
-                            //     position: toast.POSITION.TOP_CENTER,
-                            //   });
-                            // }
-                            localStorage.setItem(
-                              "receipt",
-                              JSON.stringify(old_data)
-                            );
-                          }
-                        }
-
-                        setQuan(null);
-                        setQuan2(null);
-                        if (quan != null) {
-                          document.getElementById(id).value = "";
-                        }
-                      }}
-                      variant="contained"
+                      style={{ backgroundColor: "#548CA8", color: "white" }}
                     >
-                      Add to Receipt
+                      View
                     </Button>
                   </TableCell>
                 </TableRow>
@@ -353,4 +244,6 @@ export default function BasicTable() {
       <br />
     </>
   );
-}
+};
+
+export default withRouter(Sales);
