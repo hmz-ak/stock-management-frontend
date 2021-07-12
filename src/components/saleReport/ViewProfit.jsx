@@ -45,7 +45,7 @@ const ViewProfit = () => {
     <div style={{ marginTop: 20 }}>
       <Grid align="center" container>
         <Grid item xs={2}></Grid>
-        <Grid item xs={3}>
+        <Grid item xs={12} lg={3}>
           <TextField
             id="date"
             views={["year", "month"]}
@@ -63,7 +63,7 @@ const ViewProfit = () => {
           />
           <Grid item xs={2}></Grid>
         </Grid>
-        <Grid item xs={3}>
+        <Grid item xs={12} lg={3}>
           <TextField
             id="date"
             views={["year", "month"]}
@@ -81,7 +81,7 @@ const ViewProfit = () => {
           />
         </Grid>
 
-        <Grid style={{ marginTop: 10 }} item xs={2}>
+        <Grid style={{ marginTop: 10 }} item xs={12} lg={2}>
           <Button
             onClick={() => {
               let data = {
@@ -104,7 +104,7 @@ const ViewProfit = () => {
       <Divider style={{ marginTop: 50 }} />
       <Grid align="center" style={{ marginTop: 20 }} spacing={5} container>
         <Grid item xs={2}></Grid>
-        <Grid item xs={3}>
+        <Grid item xs={12} lg={3}>
           <Paper
             style={{
               padding: 50,
@@ -122,7 +122,7 @@ const ViewProfit = () => {
             </Grid>
           </Paper>
         </Grid>
-        <Grid item xs={3}>
+        <Grid item xs={12} lg={3}>
           <Paper
             style={{
               padding: 50,
@@ -147,7 +147,7 @@ const ViewProfit = () => {
             </Grid>
           </Paper>
         </Grid>
-        <Grid item xs={3}>
+        <Grid item xs={12} lg={3}>
           <Paper
             style={{
               padding: 50,

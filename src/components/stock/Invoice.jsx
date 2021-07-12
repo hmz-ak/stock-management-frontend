@@ -14,8 +14,20 @@ import { toast } from "react-toastify";
 import PrintIcon from "@material-ui/icons/Print";
 import StorageIcon from "@material-ui/icons/Storage";
 import invoiceService from "../services/InvoiceService";
+import {
+  TextField,
+  InputLabel,
+  Select,
+  MenuItem,
+  FormControl,
+  Grid,
+} from "@material-ui/core";
 
 const useStyles = makeStyles({
+  formControl: {
+    minWidth: "200px",
+    padding: 20,
+  },
   table: {
     minWidth: 700,
   },
@@ -48,7 +60,19 @@ export default function SpanningTable() {
   const [receipt, setReceipt] = React.useState([]);
   const [discount, setDiscount] = React.useState("0");
   const [customerName, setCustomerName] = React.useState("");
+  const [customerAddress, setCustomerAddress] = React.useState("");
+  const [customerRemaining, setCustomerRemaining] = React.useState("");
+  const [customerContact, setCustomerContact] = React.useState("");
+  const [customerType, setCustomerType] = React.useState("Cash");
+  const [open, setOpen] = React.useState(false);
 
+  const handleClose = () => {
+    setOpen(false);
+  };
+
+  const handleOpen = () => {
+    setOpen(true);
+  };
   const classes = useStyles();
 
   useEffect(() => {
@@ -59,6 +83,24 @@ export default function SpanningTable() {
   }, []);
   return (
     <TableContainer component={Paper}>
+      <div>
+        <FormControl className={classes.formControl}>
+          <Select
+            labelId="demo-controlled-open-select-label"
+            id="demo-controlled-open-select"
+            open={open}
+            onClose={handleClose}
+            onOpen={handleOpen}
+            value={customerType}
+            onChange={(e) => setCustomerType(e.target.value)}
+          >
+            <MenuItem value={"Cash"}>Cash</MenuItem>;
+            <MenuItem value={"Installment"}>Installment</MenuItem>;
+          </Select>
+        </FormControl>
+        <br />
+      </div>
+
       <div
         style={{
           textAlign: "center",
@@ -77,24 +119,84 @@ export default function SpanningTable() {
         <span>date: {new Date().toDateString()}</span>
       </div>
       <br />
-      <div style={{ marginLeft: 4 }}>
-        <EditText
-          id="customer"
-          style={{ width: 200 }}
-          placeholder="Enter Customer Name here"
-          onSave={({ value }) => {
-            localStorage.setItem("customer_name", JSON.stringify(value));
-            setCustomerName(value ? value : "");
-            console.log(value);
-          }}
-          type="text"
-          defaultValue={
-            localStorage.getItem("customer_name")
-              ? JSON.parse(localStorage.getItem("customer_name"))
-              : ""
-          }
-        />
-      </div>
+      {customerType === "Cash" ? (
+        <div style={{ marginLeft: 4 }}>
+          <EditText
+            id="customer"
+            style={{ width: 200 }}
+            placeholder="Enter Customer Name here"
+            onSave={({ value }) => {
+              localStorage.setItem("customer_name", JSON.stringify(value));
+              setCustomerName(value ? value : "");
+              console.log(value);
+            }}
+            type="text"
+            defaultValue={
+              localStorage.getItem("customer_name")
+                ? JSON.parse(localStorage.getItem("customer_name"))
+                : ""
+            }
+          />
+        </div>
+      ) : (
+        <Grid align="center" container>
+          <Grid item xs={4}>
+            <EditText
+              id="customer"
+              style={{ width: 200 }}
+              placeholder="Enter Customer Name"
+              onSave={({ value }) => {
+                localStorage.setItem("customer_name", JSON.stringify(value));
+                setCustomerName(value ? value : "");
+                console.log(value);
+              }}
+              type="text"
+              defaultValue={
+                localStorage.getItem("customer_name")
+                  ? JSON.parse(localStorage.getItem("customer_name"))
+                  : ""
+              }
+            />
+          </Grid>
+          <Grid item xs={4}>
+            <EditText
+              id="customer"
+              style={{ width: 200 }}
+              placeholder="Enter Customer Address"
+              onSave={({ value }) => {
+                localStorage.setItem("customer_address", JSON.stringify(value));
+                setCustomerAddress(value ? value : "");
+                console.log(value);
+              }}
+              type="text"
+              defaultValue={
+                localStorage.getItem("customer_address")
+                  ? JSON.parse(localStorage.getItem("customer_address"))
+                  : ""
+              }
+            />
+          </Grid>
+          <Grid item xs={4}>
+            <EditText
+              id="customer"
+              style={{ width: 200 }}
+              placeholder="Enter Customer Contact No."
+              onSave={({ value }) => {
+                localStorage.setItem("customer_contact", JSON.stringify(value));
+                setCustomerContact(value ? value : "");
+                console.log(value);
+              }}
+              type="text"
+              defaultValue={
+                localStorage.getItem("customer_contact")
+                  ? JSON.parse(localStorage.getItem("customer_contact"))
+                  : ""
+              }
+            />
+          </Grid>
+        </Grid>
+      )}
+
       <br />
       <Table className={classes.table} aria-label="spanning table">
         <TableHead>
@@ -237,6 +339,7 @@ export default function SpanningTable() {
                           "receipt",
                           JSON.stringify(receipt)
                         );
+
                         setReceipt(JSON.parse(localStorage.getItem("receipt")));
                       }}
                       id="no-print"
@@ -249,14 +352,56 @@ export default function SpanningTable() {
                   </TableCell>
                 </TableRow>
               ))}
+              {customerType === "Installment" ? (
+                <>
+                  <TableRow>
+                    <TableCell colSpan={6}>Total</TableCell>
+                    <TableCell align="right">{total(receipt)}</TableCell>
 
-              <TableRow>
-                <TableCell colSpan={6}>Total</TableCell>
-                <TableCell align="right">{total(receipt)}</TableCell>
+                    {localStorage.setItem("salePriceTotal", total(receipt))}
+                    {localStorage.setItem("costPriceTotal", total2(receipt))}
+                  </TableRow>
 
-                {localStorage.setItem("salePriceTotal", total(receipt))}
-                {localStorage.setItem("costPriceTotal", total2(receipt))}
-              </TableRow>
+                  <TableRow>
+                    <TableCell colSpan={6}>Paid</TableCell>
+                    <TableCell align="right">
+                      <EditText
+                        id="customer"
+                        style={{ width: 100 }}
+                        placeholder="Enter Amount"
+                        onSave={({ value }) => {
+                          localStorage.setItem("customer_paid", value);
+                          localStorage.setItem(
+                            "customer_remaining",
+                            total(receipt) - value
+                          );
+                          setCustomerRemaining(
+                            localStorage.getItem("customer_remaining")
+                          );
+                        }}
+                        type="text"
+                        defaultValue={
+                          localStorage.getItem("customer_paid")
+                            ? JSON.parse(localStorage.getItem("customer_paid"))
+                            : ""
+                        }
+                      />
+                    </TableCell>
+                  </TableRow>
+                  <TableRow>
+                    <TableCell colSpan={6}>Remaining</TableCell>
+                    <TableCell align="right">{customerRemaining}</TableCell>
+                  </TableRow>
+                </>
+              ) : (
+                <TableRow>
+                  <TableCell colSpan={6}>Total</TableCell>
+                  <TableCell align="right">{total(receipt)}</TableCell>
+
+                  {localStorage.setItem("salePriceTotal", total(receipt))}
+                  {localStorage.setItem("costPriceTotal", total2(receipt))}
+                </TableRow>
+              )}
             </>
           )}
         </TableBody>
@@ -272,41 +417,102 @@ export default function SpanningTable() {
         >
           Print
         </Button>
-        <Button
-          startIcon={<StorageIcon />}
-          style={{ margin: 10, backgroundColor: "purple", color: "white" }}
-          variant="contained"
-          id="no-print"
-          onClick={() => {
-            JSON.parse(localStorage.getItem("receipt")) != "" &&
-            JSON.parse(localStorage.getItem("receipt"))
-              ? invoiceService
-                  .addInvoice(
-                    JSON.parse(localStorage.getItem("costPriceTotal")),
-                    JSON.parse(localStorage.getItem("salePriceTotal")),
-                    customerName,
-                    JSON.parse(localStorage.getItem("receipt"))
-                  )
-                  .then((data) => {
-                    console.log(data);
-                    toast.success("Done!", {
-                      position: toast.POSITION.TOP_CENTER,
-                    });
-                    localStorage.setItem("receipt", "[]");
-                    setReceipt([]);
-                    JSON.stringify(localStorage.setItem("customer_name", ""));
-                    JSON.stringify(localStorage.setItem("costPriceTotal", 0));
-                    JSON.stringify(localStorage.setItem("salePriceTotal", 0));
-                    setCustomerName("");
-                  })
-                  .catch((err) => console.log(err))
-              : toast.info("You have not added anything to the invoice!", {
-                  position: toast.POSITION.TOP_CENTER,
-                });
-          }}
-        >
-          Add To Record
-        </Button>
+        {customerType === "Cash" ? (
+          <Button
+            startIcon={<StorageIcon />}
+            style={{ margin: 10, backgroundColor: "purple", color: "white" }}
+            variant="contained"
+            id="no-print"
+            onClick={() => {
+              JSON.parse(localStorage.getItem("receipt")) != "" &&
+              JSON.parse(localStorage.getItem("receipt"))
+                ? invoiceService
+                    .addInvoice(
+                      JSON.parse(localStorage.getItem("costPriceTotal")),
+                      JSON.parse(localStorage.getItem("salePriceTotal")),
+                      customerName,
+                      JSON.parse(localStorage.getItem("receipt"))
+                    )
+                    .then((data) => {
+                      console.log(data);
+                      toast.success("Done!", {
+                        position: toast.POSITION.TOP_CENTER,
+                      });
+                      localStorage.setItem("receipt", "[]");
+                      setReceipt([]);
+                      JSON.stringify(localStorage.setItem("customer_name", ""));
+                      JSON.stringify(localStorage.setItem("costPriceTotal", 0));
+                      JSON.stringify(localStorage.setItem("salePriceTotal", 0));
+                      setCustomerName("");
+                    })
+                    .catch((err) => console.log(err))
+                : toast.info("You have not added anything to the invoice!", {
+                    position: toast.POSITION.TOP_CENTER,
+                  });
+            }}
+          >
+            Add To Record
+          </Button>
+        ) : (
+          <Button
+            startIcon={<StorageIcon />}
+            style={{ margin: 10, backgroundColor: "purple", color: "white" }}
+            variant="contained"
+            id="no-print"
+            onClick={() => {
+              JSON.parse(localStorage.getItem("receipt")) != "" &&
+              JSON.parse(localStorage.getItem("receipt"))
+                ? invoiceService
+                    .addInvoiceCustomer({
+                      costPriceTotal: JSON.parse(
+                        localStorage.getItem("costPriceTotal")
+                      ),
+                      salePriceTotal: JSON.parse(
+                        localStorage.getItem("salePriceTotal")
+                      ),
+                      customer_paid: JSON.parse(
+                        localStorage.getItem("customer_paid")
+                      ),
+                      customerRemaining: JSON.parse(customerRemaining),
+                      customerAddress: customerAddress,
+                      customerContact: customerContact,
+                      customerName: customerName,
+                      receipt: JSON.parse(localStorage.getItem("receipt")),
+                    })
+                    .then((data) => {
+                      console.log(data);
+                      toast.success("Done!", {
+                        position: toast.POSITION.TOP_CENTER,
+                      });
+                      localStorage.setItem("receipt", "[]");
+                      setReceipt([]);
+                      JSON.stringify(localStorage.setItem("customer_name", ""));
+                      JSON.stringify(localStorage.setItem("costPriceTotal", 0));
+                      JSON.stringify(localStorage.setItem("salePriceTotal", 0));
+                      JSON.stringify(localStorage.setItem("customer_paid", 0));
+                      JSON.stringify(
+                        localStorage.setItem("customer_address", "")
+                      );
+                      JSON.stringify(
+                        localStorage.setItem("customer_contact", "")
+                      );
+                      JSON.stringify(
+                        localStorage.setItem("customer_remaining", 0)
+                      );
+                      setCustomerName("");
+                      setCustomerAddress("");
+                      setCustomerContact("");
+                      setCustomerType("Cash");
+                    })
+                    .catch((err) => console.log(err))
+                : toast.info("You have not added anything to the invoice!", {
+                    position: toast.POSITION.TOP_CENTER,
+                  });
+            }}
+          >
+            Add To Record
+          </Button>
+        )}
       </div>
     </TableContainer>
   );
