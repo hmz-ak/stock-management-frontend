@@ -48,7 +48,7 @@ const GetInvoice = (props) => {
   const [rows, setRows] = React.useState([]);
   const [discount, setDiscount] = React.useState("0");
   const [_date, setDate] = React.useState();
-  const [customerName, setCustomerName] = React.useState("");
+  const [invoice_num, setInvoiceNum] = React.useState("");
   const classes = useStyles();
   const id = props.match.params.id;
 
@@ -62,6 +62,7 @@ const GetInvoice = (props) => {
         setRows(data.data);
         setDate(data.date);
         setCname(data.customerName);
+        setInvoiceNum(data.invoice_num);
       })
       .catch((err) => {
         console.log(err);
@@ -69,6 +70,9 @@ const GetInvoice = (props) => {
   }, []);
   return (
     <TableContainer component={Paper}>
+      <div style={{ float: "right", margin: 20, paddingRight: 20 }}>
+        Invoice Number: {invoice_num}
+      </div>
       <div
         style={{
           textAlign: "center",

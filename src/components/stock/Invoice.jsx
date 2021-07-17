@@ -128,7 +128,10 @@ export default function SpanningTable() {
       </div>
       <br />
       <div style={{ fontWeight: "bold", marginLeft: 10 }}>
-        <span>date: {new Date().toDateString()}</span>
+        <span>
+          date: {new Date().toDateString()}
+          &nbsp;&nbsp;&nbsp;{new Date().toLocaleTimeString()}
+        </span>
       </div>
       <br />
       {customerType === "Cash" ? (
@@ -460,7 +463,8 @@ export default function SpanningTable() {
             id="no-print"
             onClick={() => {
               JSON.parse(localStorage.getItem("receipt")) != "" &&
-              JSON.parse(localStorage.getItem("receipt"))
+              JSON.parse(localStorage.getItem("receipt")) &&
+              localStorage.getItem("customer_name")
                 ? invoiceService
                     .addInvoice(
                       JSON.parse(localStorage.getItem("costPriceTotal")),
@@ -481,7 +485,11 @@ export default function SpanningTable() {
                       setCustomerName("");
                     })
                     .catch((err) => console.log(err))
-                : toast.info("You have not added anything to the invoice!", {
+                : localStorage.getItem("customer_name")
+                ? toast.info("You have not added anything to invoice", {
+                    position: toast.POSITION.TOP_CENTER,
+                  })
+                : toast.info("Enter Customer name", {
                     position: toast.POSITION.TOP_CENTER,
                   });
             }}
@@ -495,15 +503,12 @@ export default function SpanningTable() {
             variant="contained"
             id="no-print"
             onClick={() => {
-              JSON.parse(localStorage.getItem("customer_paid")) === -1
-                ? toast.warning(
-                    "How much customer has paid? type 0 in paid if none",
-                    {
-                      position: toast.POSITION.TOP_CENTER,
-                    }
-                  )
-                : JSON.parse(localStorage.getItem("receipt")) != "" &&
-                  JSON.parse(localStorage.getItem("receipt"))
+              JSON.parse(localStorage.getItem("receipt")) != "" &&
+              JSON.parse(localStorage.getItem("receipt")) &&
+              localStorage.getItem("customer_name") &&
+              localStorage.getItem("customer_contact") &&
+              localStorage.getItem("customer_address") &&
+              localStorage.getItem("customer_paid")
                 ? invoiceService
                     .addInvoiceCustomer({
                       costPriceTotal: JSON.parse(
@@ -518,9 +523,13 @@ export default function SpanningTable() {
                       customerRemaining: JSON.parse(
                         localStorage.getItem("customer_remaining")
                       ),
-                      customerAddress: localStorage.getItem("customer_address"),
+                      customerAddress: JSON.parse(
+                        localStorage.getItem("customer_address")
+                      ),
 
-                      customerContact: localStorage.getItem("customer_contact"),
+                      customerContact: JSON.parse(
+                        localStorage.getItem("customer_contact")
+                      ),
 
                       customerName: JSON.parse(
                         localStorage.getItem("customer_name")
@@ -553,7 +562,17 @@ export default function SpanningTable() {
                       setCustomerType("Cash");
                     })
                     .catch((err) => console.log(err))
-                : toast.info("You have not added anything to the invoice!", {
+                : localStorage.getItem("customer_name") &&
+                  localStorage.getItem("customer_contact") &&
+                  localStorage.getItem("customer_address")
+                ? toast.info("You have not added anything to the invoice!", {
+                    position: toast.POSITION.TOP_CENTER,
+                  })
+                : localStorage.getItem("customer_paid")
+                ? toast.info("Fill All the information about customer", {
+                    position: toast.POSITION.TOP_CENTER,
+                  })
+                : toast.info("How much customer has paid? type 0 if not paid", {
                     position: toast.POSITION.TOP_CENTER,
                   });
             }}

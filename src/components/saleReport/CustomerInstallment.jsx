@@ -122,7 +122,6 @@ const CustomerInstallment = (props) => {
   const [searched, setSearched] = useState("");
   const [page, setPage] = React.useState(0);
   const [rowsPerPage, setRowsPerPage] = React.useState(5);
-  const [quan, setQuan] = React.useState(null);
   const [quan2, setQuan2] = React.useState(null);
   const [id, setId] = React.useState();
   const [bool, setBool] = React.useState(false);

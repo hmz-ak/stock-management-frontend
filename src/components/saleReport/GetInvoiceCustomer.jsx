@@ -52,6 +52,8 @@ const GetInvoiceCustomer = (props) => {
   const [contact, setContact] = React.useState("");
   const [paid, setPaid] = React.useState(0);
   const [remaining, setRemaining] = React.useState(0);
+  const [invoice_num, setInvoiceNum] = React.useState("");
+
   const [salePriceTotal, setSalePriceTotal] = React.useState(0);
   const classes = useStyles();
   const id = props.match.params.id;
@@ -70,6 +72,7 @@ const GetInvoiceCustomer = (props) => {
         setPaid(data.paid);
         setRemaining(data.remaining);
         setSalePriceTotal(data.salePriceTotal);
+        setInvoiceNum(data.invoice_num);
       })
       .catch((err) => {
         console.log(err);
@@ -77,6 +80,9 @@ const GetInvoiceCustomer = (props) => {
   }, []);
   return (
     <TableContainer component={Paper}>
+      <div style={{ float: "right", margin: 20, paddingRight: 20 }}>
+        Invoice Number: {invoice_num}
+      </div>
       <div
         style={{
           textAlign: "center",
