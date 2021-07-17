@@ -24,6 +24,7 @@ import Typography from "@material-ui/core/Typography";
 import CategoryIcon from "@material-ui/icons/Category";
 import HomeIcon from "@material-ui/icons/Home";
 import { makeStyles, useTheme, alpha } from "@material-ui/core/styles";
+import AssignmentIndIcon from "@material-ui/icons/AssignmentInd";
 import Auth from "./auth/Auth";
 import Stock from "./stock/Stock";
 import Invoice from "./stock/Invoice";
@@ -45,6 +46,9 @@ import Index from "./saleReport/Index";
 import Sales from "./saleReport/Sales";
 import GetInvoice from "./saleReport/GetInvoice";
 import ViewProfit from "./saleReport/ViewProfit";
+import CustomerInstallment from "./saleReport/CustomerInstallment";
+import GetInvoiceCustomer from "./saleReport/GetInvoiceCustomer";
+import AutoComplete from "./stock/AutoComplete";
 
 const drawerWidth = 240;
 
@@ -134,8 +138,16 @@ function ResponsiveDrawer(props) {
   const { window } = props;
   const classes = useStyles();
   const theme = useTheme();
+  const [searchTerm, setSearchTerm] = React.useState("");
+  const [searchData, setSearchData] = React.useState("");
   const [mobileOpen, setMobileOpen] = React.useState(false);
-
+  React.useEffect(() => {
+    fetch(`http://localhost:4000/stocks?q=${searchTerm}`)
+      .then((res) => res.json())
+      .then((result) => {
+        setSearchData(result);
+      });
+  }, [searchTerm]);
   const handleDrawerToggle = () => {
     setMobileOpen(!mobileOpen);
   };
@@ -177,6 +189,15 @@ function ResponsiveDrawer(props) {
             <StoreIcon />
           </ListItemIcon>
           <ListItemText primary="Edit Stock" />
+        </ListItem>
+        <ListItem
+          onClick={() => props.history.push("/customerInstallment")}
+          button
+        >
+          <ListItemIcon>
+            <AssignmentIndIcon />
+          </ListItemIcon>
+          <ListItemText primary="Customers" />
         </ListItem>
         <ListItem onClick={() => props.history.push("/saleReport")} button>
           <ListItemIcon>
@@ -258,18 +279,8 @@ function ResponsiveDrawer(props) {
             >
               Madina Traders Electric Store
             </Typography>
-            <div className={classes.search}>
-              <div className={classes.searchIcon}>
-                <SearchIcon />
-              </div>
-              <InputBase
-                placeholder="Search…"
-                classes={{
-                  root: classes.inputRoot,
-                  input: classes.inputInput,
-                }}
-                inputProps={{ "aria-label": "search" }}
-              />
+            <div style={{ color: "white" }} className={classes.search}>
+              <AutoComplete />
             </div>
           </Toolbar>
         </AppBar>
@@ -320,7 +331,15 @@ function ResponsiveDrawer(props) {
             <Route path="/saleReport" render={() => <Index />} />
             <Route path="/sales" render={() => <Sales />} />
             <Route path="/getInvoice/:id" render={() => <GetInvoice />} />
+            <Route
+              path="/getInvoiceCustomer/:id"
+              render={() => <GetInvoiceCustomer />}
+            />
             <Route path="/viewProfit" render={() => <ViewProfit />} />
+            <Route
+              path="/customerInstallment"
+              render={() => <CustomerInstallment />}
+            />
           </Switch>
         </main>
       </div>

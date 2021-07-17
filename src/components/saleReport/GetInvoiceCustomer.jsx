@@ -1,6 +1,6 @@
 import React, { useEffect } from "react";
 import { makeStyles } from "@material-ui/core/styles";
-import Table from "@material-ui/core/Table";
+import { Table, Grid } from "@material-ui/core";
 import TableBody from "@material-ui/core/TableBody";
 import TableCell from "@material-ui/core/TableCell";
 import TableContainer from "@material-ui/core/TableContainer";
@@ -8,7 +8,7 @@ import TableHead from "@material-ui/core/TableHead";
 import TableRow from "@material-ui/core/TableRow";
 import Paper from "@material-ui/core/Paper";
 import Button from "@material-ui/core/Button";
-import { EditText, EditTextarea } from "react-edit-text";
+import { EditText } from "react-edit-text";
 import "react-edit-text/dist/index.css";
 import { toast } from "react-toastify";
 import PrintIcon from "@material-ui/icons/Print";
@@ -42,26 +42,34 @@ function printReceipt() {
 
 //   return day + "/" + month + "/" + year;
 // }
-const GetInvoice = (props) => {
+const GetInvoiceCustomer = (props) => {
   const [receipt, setReceipt] = React.useState([]);
   const [cname, setCname] = React.useState("");
   const [rows, setRows] = React.useState([]);
   const [discount, setDiscount] = React.useState("0");
   const [_date, setDate] = React.useState();
-  const [customerName, setCustomerName] = React.useState("");
+  const [address, setAddress] = React.useState("");
+  const [contact, setContact] = React.useState("");
+  const [paid, setPaid] = React.useState(0);
+  const [remaining, setRemaining] = React.useState(0);
+  const [salePriceTotal, setSalePriceTotal] = React.useState(0);
   const classes = useStyles();
   const id = props.match.params.id;
 
   useEffect(() => {
-    console.log(localStorage.getItem("counter"));
     console.log(id);
     invoiceService
-      .getSingleInvoice(id)
+      .getSingleCustomer(id)
       .then((data) => {
         console.log(data);
         setRows(data.data);
         setDate(data.date);
+        setAddress(data.address);
+        setContact(data.contact);
         setCname(data.customerName);
+        setPaid(data.paid);
+        setRemaining(data.remaining);
+        setSalePriceTotal(data.salePriceTotal);
       })
       .catch((err) => {
         console.log(err);
@@ -87,15 +95,29 @@ const GetInvoice = (props) => {
         <span>date: {new Date(_date * 1000).toDateString()}</span>
       </div>
       <br />
-      <div style={{ marginLeft: 4 }}>
-        <span>Customer Name : {cname}</span>
-      </div>
-      <br />
+      <Grid container>
+        <Grid item xs={4}>
+          <div style={{ marginLeft: 4 }}>
+            <span>Customer Name : {cname}</span>
+          </div>
+        </Grid>
+        <Grid item xs={4}>
+          <div style={{ marginLeft: 4 }}>
+            <span>Address : {address}</span>
+          </div>
+        </Grid>
+        <Grid item xs={4}>
+          <div style={{ marginLeft: 4 }}>
+            <span>Contact : {contact}</span>
+          </div>
+        </Grid>
+      </Grid>
 
+      <br />
       <Table className={classes.table} aria-label="spanning table">
         <TableHead>
           <TableRow>
-            <TableCell id="no-print">Item Code</TableCell>
+            <TableCell>Item Code</TableCell>
             <TableCell align="right">Desc</TableCell>
             <TableCell align="right">Price</TableCell>
             <TableCell align="right">Quantity</TableCell>
@@ -121,12 +143,37 @@ const GetInvoice = (props) => {
 
             <TableRow>
               <TableCell colSpan={6}>Total</TableCell>
-              <TableCell align="right">{total(rows)}</TableCell>
+              <TableCell align="right">{salePriceTotal}</TableCell>
+            </TableRow>
+            <TableRow>
+              <TableCell colSpan={6}>Paid</TableCell>
+              <TableCell align="right">{paid}</TableCell>
+            </TableRow>
+            <TableRow>
+              <TableCell colSpan={6}>Remaining</TableCell>
+              <TableCell align="right">{remaining}</TableCell>
+            </TableRow>
+            <TableRow>
+              <TableCell colSpan={6}>Receive Payment</TableCell>
+              <TableCell align="right">
+                <EditText
+                  id="customer"
+                  style={{ width: 100 }}
+                  placeholder="Enter Amount"
+                  onSave={({ value }) => {
+                    localStorage.setItem("amount_receieved", value);
+                  }}
+                  defaultValue={
+                    localStorage.getItem("amount_receieved")
+                      ? JSON.parse(localStorage.getItem("amount_receieved"))
+                      : 0
+                  }
+                />
+              </TableCell>
             </TableRow>
           </>
         </TableBody>
       </Table>
-
       <div style={{ textAlign: "center" }}>
         <Button
           startIcon={<PrintIcon />}
@@ -138,9 +185,34 @@ const GetInvoice = (props) => {
         >
           Print
         </Button>
+        <Button
+          startIcon={<StorageIcon />}
+          style={{ margin: 10, backgroundColor: "purple", color: "white" }}
+          variant="contained"
+          id="no-print"
+          onClick={() => {
+            console.log(localStorage.getItem("amount_receieved"));
+            invoiceService
+              .updateSingleCustomer(
+                id,
+                JSON.parse(localStorage.getItem("amount_receieved"))
+              )
+              .then((data) => {
+                console.log(data);
+                toast.success("Done!", {
+                  position: toast.POSITION.TOP_CENTER,
+                });
+                JSON.stringify(localStorage.setItem("amount_receieved", 0));
+                window.location.reload();
+              })
+              .catch((err) => console.log(err));
+          }}
+        >
+          Add To Record
+        </Button>
       </div>
     </TableContainer>
   );
 };
 
-export default withRouter(GetInvoice);
+export default withRouter(GetInvoiceCustomer);

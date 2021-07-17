@@ -16,3 +16,15 @@ code {
     display: none;
   }
 }
+/* table {
+  counter-reset: rowNumber;
+}
+
+table tr::before {
+  display: table-cell;
+  counter-increment: rowNumber;
+  content: counter(rowNumber) ".";
+  margin-top: 10px;
+  padding-top: 10px;
+  text-align: right;
+} */
