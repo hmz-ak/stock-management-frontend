@@ -58,7 +58,8 @@ const GetInvoiceCustomer = (props) => {
   const [salePriceTotal, setSalePriceTotal] = React.useState(0);
   const classes = useStyles();
   const id = props.match.params.id;
-  let sum = 0;
+  let sum = 0,
+    final = 0;
   useEffect(() => {
     console.log(id);
     invoiceService
@@ -136,7 +137,12 @@ const GetInvoiceCustomer = (props) => {
         <TableBody>
           <>
             {rows.map((row, index, arr) => {
-              sum = index == 0 ? 0 : sum + arr[index - 1].total;
+              sum =
+                index == 0
+                  ? sum + arr[index].total
+                  : row.credit
+                  ? sum - row.credit
+                  : sum + row.total;
 
               return (
                 <TableRow key={index}>
@@ -146,12 +152,21 @@ const GetInvoiceCustomer = (props) => {
                   <TableCell align="right">
                     {new Date(_date * 1000).toDateString()}
                   </TableCell>
-                  <TableCell align="right">{row.total}</TableCell>
-                  <TableCell align="right">{0}</TableCell>
-
                   <TableCell align="right">
-                    {index == 0 ? row.total : row.total + sum}
+                    {row.credit ? 0 : row.total}
                   </TableCell>
+                  <TableCell align="right">
+                    {row.credit ? row.credit : 0}
+                  </TableCell>
+                  {row.credit ? (
+                    <TableCell align="right">
+                      {index == 0 ? row.total - row.credit : sum}
+                    </TableCell>
+                  ) : (
+                    <TableCell align="right">
+                      {index == 0 ? row.total : sum}
+                    </TableCell>
+                  )}
                 </TableRow>
               );
             })}
