@@ -4,6 +4,8 @@ class InvoiceService extends GenericService {
   constructor() {
     super();
   }
+  getCustomerByInvoice = (value) =>
+    this.post("/customers/getCustomerByInvoice", { value });
   getInvoiceNumber = () => this.get("/sales/getInvoiceNum/");
   getInvoice = () => this.get("/sales/");
   getInvoiceCustomer = () => this.get("/customers/");

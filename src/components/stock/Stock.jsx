@@ -294,14 +294,10 @@ export default function BasicTable() {
                                   position: toast.POSITION.TOP_CENTER,
                                 }
                               );
-                              // console.log("already added to cart");
+                             
                             }
 
-                            //   old_data.push(arr);
-                            //   toast.success("Item added to receipt", {
-                            //     position: toast.POSITION.TOP_CENTER,
-                            //   });
-                            // }
+                           
                             localStorage.setItem(
                               "receipt",
                               JSON.stringify(old_data)

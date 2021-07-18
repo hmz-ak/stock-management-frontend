@@ -64,7 +64,14 @@ export default function SpanningTable() {
   const [customerAddress, setCustomerAddress] = React.useState("");
   const [customerRemaining, setCustomerRemaining] = React.useState("");
   const [customerContact, setCustomerContact] = React.useState("");
-  const [customerType, setCustomerType] = React.useState("Cash");
+  const [existingCustomer, setExistingCustomer] = React.useState("");
+  const [existingAddress, setExistingAddress] = React.useState("");
+  const [existingContact, setExistingContact] = React.useState("");
+  const [customerType, setCustomerType] = React.useState(
+    localStorage.getItem("customerType")
+      ? localStorage.getItem("customerType")
+      : "Cash"
+  );
   const [invoiceNum, setInvoiceNum] = React.useState(0);
   const [open, setOpen] = React.useState(false);
 
@@ -94,7 +101,53 @@ export default function SpanningTable() {
     <TableContainer component={Paper}>
       <div>
         <div style={{ float: "right", margin: 20, paddingRight: 20 }}>
-          Invoice Number: {invoiceNum + 1}
+          {customerType == "Existing" ? (
+            <EditText
+              placeholder="Enter Invoice No."
+              onSave={({ value }) => {
+                invoiceService
+                  .getCustomerByInvoice(value)
+                  .then((data) => {
+                    if (data.length != 0) {
+                      // console.log(data[0]._id);
+                      localStorage.setItem("existing_id", data[0]._id);
+                      localStorage.setItem(
+                        "existing_customer_name",
+                        data[0].customerName
+                      );
+                      localStorage.setItem(
+                        "existing_customer_address",
+                        data[0].address
+                      );
+                      localStorage.setItem(
+                        "existing_customer_contact",
+                        data[0].contact
+                      );
+                      setExistingCustomer(data[0].customerName);
+                      setExistingAddress(data[0].address);
+                      setExistingContact(data[0].contact);
+                      // console.log(localStorage.getItem("existing"));
+                    } else {
+                      toast.error("Customer Does Not Exist", {
+                        position: toast.POSITION.TOP_CENTER,
+                      });
+                      setExistingCustomer("");
+                      setExistingAddress("");
+                      setExistingContact("");
+                      localStorage.setItem("existing_id", "");
+                      localStorage.setItem("existing_customer_name", "");
+                      localStorage.setItem("existing_customer_address", "");
+                      localStorage.setItem("existing_customer_contact", "");
+                    }
+                  })
+                  .catch((err) => console.log(err));
+              }}
+              type="number"
+              defaultValue={""}
+            />
+          ) : (
+            <>Invoice Number: {invoiceNum + 1}</>
+          )}
         </div>
 
         <FormControl className={classes.formControl}>
@@ -105,24 +158,43 @@ export default function SpanningTable() {
             onClose={handleClose}
             onOpen={handleOpen}
             value={customerType}
-            onChange={(e) => setCustomerType(e.target.value)}
+            onChange={(e) => {
+              setCustomerType(e.target.value);
+              localStorage.setItem("customerType", e.target.value);
+            }}
           >
             <MenuItem value={"Cash"}>Cash</MenuItem>;
             <MenuItem value={"Installment"}>Installment</MenuItem>;
+            <MenuItem value={"Existing"}>Existing</MenuItem>;
           </Select>
         </FormControl>
         <br />
       </div>
-      <div
-        style={{
-          textAlign: "center",
-          fontSize: 40,
-          fontWeight: "bold",
-          color: "green",
-        }}
-      >
-        <span>MADINA TRADERS</span>
-      </div>
+      {customerType == "Existing" ? (
+        <div
+          style={{
+            textAlign: "center",
+            fontSize: 40,
+            marginLeft: 150,
+            fontWeight: "bold",
+            color: "green",
+          }}
+        >
+          <span>MADINA TRADERS</span>
+        </div>
+      ) : (
+        <div
+          style={{
+            textAlign: "center",
+            fontSize: 40,
+            fontWeight: "bold",
+            color: "green",
+          }}
+        >
+          <span>MADINA TRADERS</span>
+        </div>
+      )}
+
       <div style={{ textAlign: "center", fontWeight: "bold" }}>
         <span>Mobile #: 0321-8464465, 03004001431</span>
       </div>
@@ -153,7 +225,7 @@ export default function SpanningTable() {
             }
           />
         </div>
-      ) : (
+      ) : customerType == "Installment" ? (
         <Grid align="center" container>
           <Grid item xs={4}>
             <EditText
@@ -210,7 +282,20 @@ export default function SpanningTable() {
             />
           </Grid>
         </Grid>
+      ) : (
+        <Grid align="center" container>
+          <Grid item xs={4}>
+            <span>Customer Name : {existingCustomer}</span>
+          </Grid>
+          <Grid item xs={4}>
+            <span>Address # {existingAddress}</span>
+          </Grid>
+          <Grid item xs={4}>
+            <span>Contact : {existingContact}</span>
+          </Grid>
+        </Grid>
       )}
+
       <br />
       <Table className="numberedTable" aria-label="spanning table">
         <TableHead>
@@ -438,6 +523,7 @@ export default function SpanningTable() {
 
                   {localStorage.setItem("salePriceTotal", total(receipt))}
                   {localStorage.setItem("costPriceTotal", total2(receipt))}
+                  {localStorage.setItem("customer_remaining", total(receipt))}
                 </TableRow>
               )}
             </>
@@ -496,7 +582,7 @@ export default function SpanningTable() {
           >
             Add To Record
           </Button>
-        ) : (
+        ) : customerType === "Installment" ? (
           <Button
             startIcon={<StorageIcon />}
             style={{ margin: 10, backgroundColor: "purple", color: "white" }}
@@ -559,7 +645,7 @@ export default function SpanningTable() {
                       setCustomerName("");
                       setCustomerAddress("");
                       setCustomerContact("");
-                      setCustomerType("Cash");
+                      setCustomerType("Installment");
                     })
                     .catch((err) => console.log(err))
                 : localStorage.getItem("customer_name") &&
@@ -573,6 +659,65 @@ export default function SpanningTable() {
                     position: toast.POSITION.TOP_CENTER,
                   })
                 : toast.info("How much customer has paid? type 0 if not paid", {
+                    position: toast.POSITION.TOP_CENTER,
+                  });
+            }}
+          >
+            Add To Record
+          </Button>
+        ) : (
+          <Button
+            startIcon={<StorageIcon />}
+            style={{ margin: 10, backgroundColor: "purple", color: "white" }}
+            variant="contained"
+            id="no-print"
+            onClick={() => {
+              JSON.parse(localStorage.getItem("receipt")) != "" &&
+              JSON.parse(localStorage.getItem("receipt"))
+                ? invoiceService
+                    .addInvoiceCustomer({
+                      costPriceTotal: JSON.parse(
+                        localStorage.getItem("costPriceTotal")
+                      ),
+                      salePriceTotal: JSON.parse(
+                        localStorage.getItem("salePriceTotal")
+                      ),
+                      customer_paid: JSON.parse(
+                        localStorage.getItem("customer_paid")
+                      ),
+                      customerRemaining: JSON.parse(
+                        localStorage.getItem("customer_remaining")
+                      ),
+
+                      receipt: JSON.parse(localStorage.getItem("receipt")),
+                    })
+                    .then((data) => {
+                      console.log(data);
+                      toast.success("Done!", {
+                        position: toast.POSITION.TOP_CENTER,
+                      });
+                      localStorage.setItem("receipt", "[]");
+                      setReceipt([]);
+                      JSON.stringify(localStorage.setItem("customer_name", ""));
+                      JSON.stringify(localStorage.setItem("costPriceTotal", 0));
+                      JSON.stringify(localStorage.setItem("salePriceTotal", 0));
+                      JSON.stringify(localStorage.setItem("customer_paid", 0));
+                      JSON.stringify(
+                        localStorage.setItem("customer_address", "")
+                      );
+                      JSON.stringify(
+                        localStorage.setItem("customer_contact", "")
+                      );
+                      JSON.stringify(
+                        localStorage.setItem("customer_remaining", 0)
+                      );
+                      setCustomerName("");
+                      setCustomerAddress("");
+                      setCustomerContact("");
+                      setCustomerType("Installment");
+                    })
+                    .catch((err) => console.log(err))
+                : toast.info("You have not added anything to the invoice!", {
                     position: toast.POSITION.TOP_CENTER,
                   });
             }}
