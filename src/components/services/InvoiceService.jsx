@@ -17,6 +17,8 @@ class InvoiceService extends GenericService {
   addInvoice = (costPriceTotal, salePriceTotal, name, data) =>
     this.post("/sales/", { costPriceTotal, salePriceTotal, name, data });
   addInvoiceCustomer = (data) => this.post("/customers/", data);
+  updateInvoiceCustomer = (_id, data) =>
+    this.put("/customers/invoice/" + _id, data);
 
   deleteInvoice = (_id) => this.delete("/api/novels/delete/" + _id);
   updateInvoice = (_id, formData, config) =>

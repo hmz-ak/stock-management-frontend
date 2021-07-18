@@ -30,6 +30,7 @@ const useStyles = makeStyles({
 function total(items) {
   return items.map(({ total }) => total).reduce((sum, i) => sum + i, 0);
 }
+
 function printReceipt() {
   window.print();
 }
@@ -57,7 +58,7 @@ const GetInvoiceCustomer = (props) => {
   const [salePriceTotal, setSalePriceTotal] = React.useState(0);
   const classes = useStyles();
   const id = props.match.params.id;
-
+  let sum = 0;
   useEffect(() => {
     console.log(id);
     invoiceService
@@ -123,29 +124,37 @@ const GetInvoiceCustomer = (props) => {
       <Table className={classes.table} aria-label="spanning table">
         <TableHead>
           <TableRow>
-            <TableCell>Item Code</TableCell>
-            <TableCell align="right">Desc</TableCell>
-            <TableCell align="right">Price</TableCell>
-            <TableCell align="right">Quantity</TableCell>
-            <TableCell align="right">Disc %</TableCell>
-            <TableCell align="right">Disc</TableCell>
+            <TableCell align="right">Sr No.</TableCell>
+            <TableCell align="right">Item Desc</TableCell>
+            <TableCell align="right">Date</TableCell>
+            <TableCell align="right">Debit</TableCell>
+            <TableCell align="right">Credit</TableCell>
             <TableCell align="right">Amount</TableCell>
             <TableCell align="right"></TableCell>
           </TableRow>
         </TableHead>
         <TableBody>
           <>
-            {rows.map((row) => (
-              <TableRow key={row.itemCode}>
-                <TableCell id="no-print">{row.itemCode}</TableCell>
-                <TableCell align="right">{row.name}</TableCell>
-                <TableCell align="right">{row.price}</TableCell>
-                <TableCell align="right">{row.quantity}</TableCell>
-                <TableCell align="right">{row.disc}</TableCell>
-                <TableCell align="right">{row.discounted}</TableCell>
-                <TableCell align="right">{row.total}</TableCell>
-              </TableRow>
-            ))}
+            {rows.map((row, index, arr) => {
+              sum = index == 0 ? 0 : sum + arr[index - 1].total;
+
+              return (
+                <TableRow key={index}>
+                  <TableCell align="right">{index + 1}</TableCell>
+
+                  <TableCell align="right">{row.name}</TableCell>
+                  <TableCell align="right">
+                    {new Date(_date * 1000).toDateString()}
+                  </TableCell>
+                  <TableCell align="right">{row.total}</TableCell>
+                  <TableCell align="right">{0}</TableCell>
+
+                  <TableCell align="right">
+                    {index == 0 ? row.total : row.total + sum}
+                  </TableCell>
+                </TableRow>
+              );
+            })}
 
             <TableRow>
               <TableCell colSpan={6}>Total</TableCell>
@@ -157,7 +166,7 @@ const GetInvoiceCustomer = (props) => {
             </TableRow>
             <TableRow>
               <TableCell colSpan={6}>Remaining</TableCell>
-              <TableCell align="right">{remaining}</TableCell>
+              <TableCell align="right">{salePriceTotal - paid}</TableCell>
             </TableRow>
             <TableRow>
               <TableCell colSpan={6}>Receive Payment</TableCell>
@@ -197,21 +206,24 @@ const GetInvoiceCustomer = (props) => {
           variant="contained"
           id="no-print"
           onClick={() => {
-            console.log(localStorage.getItem("amount_receieved"));
-            invoiceService
-              .updateSingleCustomer(
-                id,
-                JSON.parse(localStorage.getItem("amount_receieved"))
-              )
-              .then((data) => {
-                console.log(data);
-                toast.success("Done!", {
+            localStorage.getItem("amount_receieved")
+              ? invoiceService
+                  .updateSingleCustomer(
+                    id,
+                    JSON.parse(localStorage.getItem("amount_receieved"))
+                  )
+                  .then((data) => {
+                    console.log(data);
+                    toast.success("Done!", {
+                      position: toast.POSITION.TOP_CENTER,
+                    });
+                    JSON.stringify(localStorage.setItem("amount_receieved", 0));
+                    window.location.reload();
+                  })
+                  .catch((err) => console.log(err))
+              : toast.success("Add receiving amount!", {
                   position: toast.POSITION.TOP_CENTER,
                 });
-                JSON.stringify(localStorage.setItem("amount_receieved", 0));
-                window.location.reload();
-              })
-              .catch((err) => console.log(err));
           }}
         >
           Add To Record

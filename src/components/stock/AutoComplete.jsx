@@ -20,52 +20,60 @@ export default function AutoComplete2() {
   }, []);
 
   function callFunc(row) {
-    let arr = {
-      id: row._id,
-      itemCode: row.itemCode,
-      name: row.name,
-      disc: 0,
-      discounted: 0,
-      price: row.salePrice,
-      quantity: 1,
-      total: row.salePrice,
-      category: row.category,
-      stock: row.stockQuantity,
-      cost: row.costPrice,
-      totalCost: row.costPrice,
-    };
+    if (row.stockQuantity != 0 && row.stockQuantity > 0) {
+      let arr = {
+        id: row._id,
+        itemCode: row.itemCode,
+        name: row.name,
+        disc: 0,
+        discounted: 0,
+        price: row.salePrice,
+        quantity: 1,
+        total: row.salePrice,
+        category: row.category,
+        stock: row.stockQuantity,
+        cost: row.costPrice,
+        totalCost: row.costPrice,
+      };
 
-    if (localStorage.getItem("receipt") == null) {
-      localStorage.setItem("receipt", "[]");
-    }
-
-    if (arr.id) {
-      var old_data = JSON.parse(localStorage.getItem("receipt"));
-      var filterArray = old_data.filter(function (item) {
-        console.log(item);
-        console.log(item.id);
-        console.log(arr.id);
-        if (item.id == arr.id) {
-          return item;
-        } else {
-          return null;
-        }
-      });
-      console.log(filterArray);
-      if (filterArray.length == 0) {
-        old_data.push(arr);
-        toast.info("Added to Receipt", {
-          position: toast.POSITION.TOP_CENTER,
-        });
-      } else {
-        toast.warning("You have already added this item into receipt", {
-          position: toast.POSITION.TOP_CENTER,
-        });
+      if (localStorage.getItem("receipt") == null) {
+        localStorage.setItem("receipt", "[]");
       }
 
-      window.location.reload();
+      if (arr.id) {
+        var old_data = JSON.parse(localStorage.getItem("receipt"));
+        var filterArray = old_data.filter(function (item) {
+          console.log(item);
+          console.log(item.id);
+          console.log(arr.id);
+          if (item.id == arr.id) {
+            return item;
+          } else {
+            return null;
+          }
+        });
+        console.log(filterArray);
+        if (filterArray.length == 0) {
+          old_data.push(arr);
+          toast.info("Added to Receipt", {
+            position: toast.POSITION.TOP_CENTER,
+          });
+        } else {
+          toast.warning("You have already added this item into receipt", {
+            position: toast.POSITION.TOP_CENTER,
+          });
+        }
 
-      localStorage.setItem("receipt", JSON.stringify(old_data));
+        window.location.reload();
+
+        localStorage.setItem("receipt", JSON.stringify(old_data));
+      }
+    } else {
+      let temp =
+        "Remaining Stock for the Item " + row.name + " is " + row.stockQuantity;
+      toast.error(temp, {
+        position: toast.POSITION.TOP_CENTER,
+      });
     }
   }
 

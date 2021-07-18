@@ -330,15 +330,16 @@ export default function SpanningTable() {
                     <TableCell align="right">{row.name}</TableCell>
                     <TableCell style={{ width: 100 }} align="right">
                       <EditText
-                        onSave={(value) => {
+                        onSave={({ value }) => {
                           let item = JSON.parse(
                             localStorage.getItem("receipt")
                           );
 
                           for (let i = 0; i < item.length; i++) {
                             if (row.itemCode == item[i].itemCode) {
-                              item[i].price = value.value;
-                              item[i].total = item[i].quantity * value.value;
+                              item[i].price = parseInt(value);
+                              item[i].total =
+                                item[i].quantity * parseInt(value);
                               if (row.disc == 0) {
                                 item[i].total =
                                   item[i].quantity * item[i].price;
@@ -386,7 +387,7 @@ export default function SpanningTable() {
                           } else {
                             for (let i = 0; i < item.length; i++) {
                               if (row.itemCode == item[i].itemCode) {
-                                item[i].quantity = value;
+                                item[i].quantity = parseInt(value);
                                 if (row.disc == 0) {
                                   item[i].total =
                                     item[i].quantity * item[i].price;
@@ -424,7 +425,7 @@ export default function SpanningTable() {
                           for (let i = 0; i < item.length; i++) {
                             if (row.itemCode == item[i].itemCode) {
                               console.log(value.value);
-                              item[i].disc = value.value;
+                              item[i].disc = parseInt(value.value);
                               item[i].discounted =
                                 ((item[i].price * item[i].quantity) / 100) *
                                 item[i].disc;
@@ -481,39 +482,6 @@ export default function SpanningTable() {
 
                     {localStorage.setItem("salePriceTotal", total(receipt))}
                     {localStorage.setItem("costPriceTotal", total2(receipt))}
-                  </TableRow>
-
-                  <TableRow>
-                    <TableCell colSpan={6}>Paid</TableCell>
-                    <TableCell align="right">
-                      <EditText
-                        id="customer"
-                        style={{ width: 100 }}
-                        placeholder="Enter Amount"
-                        onSave={({ value }) => {
-                          localStorage.setItem("customer_paid", value);
-                          localStorage.setItem(
-                            "customer_remaining",
-                            total(receipt) - value
-                          );
-                          setCustomerRemaining(
-                            localStorage.getItem("customer_remaining")
-                          );
-                        }}
-                        type="text"
-                        defaultValue={
-                          localStorage.getItem("customer_paid")
-                            ? JSON.parse(localStorage.getItem("customer_paid"))
-                            : 0
-                        }
-                      />
-                    </TableCell>
-                  </TableRow>
-                  <TableRow>
-                    <TableCell colSpan={6}>Remaining</TableCell>
-                    <TableCell align="right">
-                      {localStorage.getItem("customer_remaining")}
-                    </TableCell>
                   </TableRow>
                 </>
               ) : (
@@ -593,8 +561,7 @@ export default function SpanningTable() {
               JSON.parse(localStorage.getItem("receipt")) &&
               localStorage.getItem("customer_name") &&
               localStorage.getItem("customer_contact") &&
-              localStorage.getItem("customer_address") &&
-              localStorage.getItem("customer_paid")
+              localStorage.getItem("customer_address")
                 ? invoiceService
                     .addInvoiceCustomer({
                       costPriceTotal: JSON.parse(
@@ -603,9 +570,7 @@ export default function SpanningTable() {
                       salePriceTotal: JSON.parse(
                         localStorage.getItem("salePriceTotal")
                       ),
-                      customer_paid: JSON.parse(
-                        localStorage.getItem("customer_paid")
-                      ),
+                      customer_paid: 0,
                       customerRemaining: JSON.parse(
                         localStorage.getItem("customer_remaining")
                       ),
@@ -654,11 +619,7 @@ export default function SpanningTable() {
                 ? toast.info("You have not added anything to the invoice!", {
                     position: toast.POSITION.TOP_CENTER,
                   })
-                : localStorage.getItem("customer_paid")
-                ? toast.info("Fill All the information about customer", {
-                    position: toast.POSITION.TOP_CENTER,
-                  })
-                : toast.info("How much customer has paid? type 0 if not paid", {
+                : toast.info("Fill All the information about customer", {
                     position: toast.POSITION.TOP_CENTER,
                   });
             }}
@@ -672,25 +633,30 @@ export default function SpanningTable() {
             variant="contained"
             id="no-print"
             onClick={() => {
+              console.log("here");
               JSON.parse(localStorage.getItem("receipt")) != "" &&
-              JSON.parse(localStorage.getItem("receipt"))
+              JSON.parse(localStorage.getItem("receipt")) &&
+              localStorage.getItem("existing_id")
                 ? invoiceService
-                    .addInvoiceCustomer({
-                      costPriceTotal: JSON.parse(
-                        localStorage.getItem("costPriceTotal")
-                      ),
-                      salePriceTotal: JSON.parse(
-                        localStorage.getItem("salePriceTotal")
-                      ),
-                      customer_paid: JSON.parse(
-                        localStorage.getItem("customer_paid")
-                      ),
-                      customerRemaining: JSON.parse(
-                        localStorage.getItem("customer_remaining")
-                      ),
+                    .updateInvoiceCustomer(
+                      localStorage.getItem("existing_id"),
+                      {
+                        costPriceTotal: JSON.parse(
+                          localStorage.getItem("costPriceTotal")
+                        ),
+                        salePriceTotal: JSON.parse(
+                          localStorage.getItem("salePriceTotal")
+                        ),
+                        customer_paid: JSON.parse(
+                          localStorage.getItem("customer_paid")
+                        ),
+                        customerRemaining: JSON.parse(
+                          localStorage.getItem("customer_remaining")
+                        ),
 
-                      receipt: JSON.parse(localStorage.getItem("receipt")),
-                    })
+                        receipt: JSON.parse(localStorage.getItem("receipt")),
+                      }
+                    )
                     .then((data) => {
                       console.log(data);
                       toast.success("Done!", {
@@ -711,13 +677,20 @@ export default function SpanningTable() {
                       JSON.stringify(
                         localStorage.setItem("customer_remaining", 0)
                       );
+
+                      localStorage.setItem("existing_id", "");
+
                       setCustomerName("");
                       setCustomerAddress("");
                       setCustomerContact("");
                       setCustomerType("Installment");
                     })
                     .catch((err) => console.log(err))
-                : toast.info("You have not added anything to the invoice!", {
+                : localStorage.getItem("existing_id")
+                ? toast.info("You have not added anything to the invoice!", {
+                    position: toast.POSITION.TOP_CENTER,
+                  })
+                : toast.warning("Enter Invoice Number", {
                     position: toast.POSITION.TOP_CENTER,
                   });
             }}
