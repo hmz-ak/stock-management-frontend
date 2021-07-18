@@ -183,10 +183,10 @@ const CustomerInstallment = (props) => {
           <Table className={classes.table} aria-label="simple table">
             <TableHead>
               <TableRow>
+                <TableCell align="left">Invoice Number</TableCell>
                 <TableCell align="left">Customer Name</TableCell>
                 <TableCell align="left">Amount</TableCell>
                 <TableCell align="left">Paid</TableCell>
-                <TableCell align="left">Remaining</TableCell>
                 <TableCell align="left">Customer Contact</TableCell>
                 <TableCell align="left">View Invoice</TableCell>
               </TableRow>
@@ -200,10 +200,10 @@ const CustomerInstallment = (props) => {
                 : rows
               ).map((row) => (
                 <TableRow key={row._id}>
+                  <TableCell align="left">{row.invoice_num}</TableCell>
                   <TableCell align="left">{row.customerName}</TableCell>
                   <TableCell align="left">{row.salePriceTotal}</TableCell>
                   <TableCell align="left">{row.paid}</TableCell>
-                  <TableCell align="left">{row.remaining}</TableCell>
                   <TableCell align="left">{row.contact}</TableCell>
 
                   <TableCell align="left">

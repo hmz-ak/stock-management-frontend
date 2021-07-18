@@ -33,6 +33,7 @@ export default function AutoComplete2() {
         category: row.category,
         stock: row.stockQuantity,
         cost: row.costPrice,
+        date: new Date().getTime() / 1000,
         totalCost: row.costPrice,
       };
 

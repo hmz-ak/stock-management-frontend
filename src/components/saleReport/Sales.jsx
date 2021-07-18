@@ -183,7 +183,7 @@ const Sales = (props) => {
           <Table className={classes.table} aria-label="simple table">
             <TableHead>
               <TableRow>
-                <TableCell align="left">Invoice ID</TableCell>
+                <TableCell align="left">Invoice Number</TableCell>
                 <TableCell align="left">Customer Name</TableCell>
                 <TableCell align="left">View Invoice</TableCell>
               </TableRow>
@@ -197,7 +197,7 @@ const Sales = (props) => {
                 : rows
               ).map((row) => (
                 <TableRow key={row._id}>
-                  <TableCell align="left">{row._id}</TableCell>
+                  <TableCell align="left">{row.invoice_num}</TableCell>
                   <TableCell align="left">{row.customerName}</TableCell>
 
                   <TableCell align="left">

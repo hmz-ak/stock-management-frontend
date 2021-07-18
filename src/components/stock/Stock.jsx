@@ -246,6 +246,7 @@ export default function BasicTable() {
                           category: row.category,
                           stock: row.stockQuantity,
                           cost: row.costPrice,
+                          date: new Date().getTime() / 1000,
                           totalCost: row.costPrice * quan,
                         };
 
@@ -294,10 +295,8 @@ export default function BasicTable() {
                                   position: toast.POSITION.TOP_CENTER,
                                 }
                               );
-                             
                             }
 
-                           
                             localStorage.setItem(
                               "receipt",
                               JSON.stringify(old_data)

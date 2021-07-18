@@ -76,12 +76,12 @@ const GetInvoice = (props) => {
       <div
         style={{
           textAlign: "center",
-          fontSize: 40,
+          fontSize: 30,
           fontWeight: "bold",
           color: "green",
         }}
       >
-        <span>MADINA TRADERS</span>
+        <span>MADINA TRADERS & Electric Store</span>
       </div>
       <div style={{ textAlign: "center", fontWeight: "bold" }}>
         <span>Mobile #: 0321-8464465, 03004001431</span>
@@ -142,6 +142,15 @@ const GetInvoice = (props) => {
         >
           Print
         </Button>
+      </div>
+      <div style={{ marginTop: 100, marginBottom: 100, fontSize: 24 }}>
+        <span style={{ marginLeft: 15 }}>Signature ______________</span>
+      </div>
+      <div style={{ marginTop: 100, marginBottom: 70, fontSize: 24 }}>
+        <span style={{ marginLeft: 15 }}>
+          Address : Shop # 5 Model Town, K Block Near PSO Petrol Pump Marian
+          Stop Lahore.
+        </span>
       </div>
     </TableContainer>
   );

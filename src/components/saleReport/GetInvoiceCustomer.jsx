@@ -88,19 +88,22 @@ const GetInvoiceCustomer = (props) => {
       <div
         style={{
           textAlign: "center",
-          fontSize: 40,
+          fontSize: 30,
           fontWeight: "bold",
           color: "green",
         }}
       >
-        <span>MADINA TRADERS</span>
+        <span>MADINA TRADERS & Electric Store</span>
       </div>
       <div style={{ textAlign: "center", fontWeight: "bold" }}>
         <span>Mobile #: 0321-8464465, 03004001431</span>
       </div>
       <br />
       <div style={{ fontWeight: "bold", marginLeft: 10 }}>
-        <span>date: {new Date(_date * 1000).toDateString()}</span>
+        <span>
+          date: {new Date(_date * 1000).toDateString()} &nbsp;&nbsp;&nbsp;
+          {new Date(_date * 1000).toLocaleTimeString()}
+        </span>
       </div>
       <br />
       <Grid container>
@@ -150,7 +153,7 @@ const GetInvoiceCustomer = (props) => {
 
                   <TableCell align="right">{row.name}</TableCell>
                   <TableCell align="right">
-                    {new Date(_date * 1000).toDateString()}
+                    {new Date(row.date * 1000).toDateString()}
                   </TableCell>
                   <TableCell align="right">
                     {row.credit ? 0 : row.total}
@@ -172,7 +175,7 @@ const GetInvoiceCustomer = (props) => {
             })}
 
             <TableRow>
-              <TableCell colSpan={6}>Total</TableCell>
+              <TableCell colSpan={6}>Total Amount</TableCell>
               <TableCell align="right">{salePriceTotal}</TableCell>
             </TableRow>
             <TableRow>
@@ -180,12 +183,14 @@ const GetInvoiceCustomer = (props) => {
               <TableCell align="right">{paid}</TableCell>
             </TableRow>
             <TableRow>
-              <TableCell colSpan={6}>Remaining</TableCell>
+              <TableCell colSpan={6}>Remaining Balance</TableCell>
               <TableCell align="right">{salePriceTotal - paid}</TableCell>
             </TableRow>
             <TableRow>
-              <TableCell colSpan={6}>Receive Payment</TableCell>
-              <TableCell align="right">
+              <TableCell id="no-print" colSpan={6}>
+                Receive Payment
+              </TableCell>
+              <TableCell id="no-print" align="right">
                 <EditText
                   id="customer"
                   style={{ width: 100 }}
@@ -204,6 +209,7 @@ const GetInvoiceCustomer = (props) => {
           </>
         </TableBody>
       </Table>
+
       <div style={{ textAlign: "center" }}>
         <Button
           startIcon={<PrintIcon />}
@@ -243,6 +249,15 @@ const GetInvoiceCustomer = (props) => {
         >
           Add To Record
         </Button>
+      </div>
+      <div style={{ marginTop: 100, marginBottom: 100, fontSize: 24 }}>
+        <span style={{ marginLeft: 15 }}>Signature ______________</span>
+      </div>
+      <div style={{ marginTop: 100, marginBottom: 70, fontSize: 24 }}>
+        <span style={{ marginLeft: 15 }}>
+          Address : Shop # 5 Model Town, K Block Near PSO Petrol Pump Marian
+          Stop Lahore.
+        </span>
       </div>
     </TableContainer>
   );

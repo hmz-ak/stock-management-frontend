@@ -174,24 +174,24 @@ export default function SpanningTable() {
         <div
           style={{
             textAlign: "center",
-            fontSize: 40,
-            marginLeft: 150,
+            fontSize: 30,
+            marginLeft: 178,
             fontWeight: "bold",
             color: "green",
           }}
         >
-          <span>MADINA TRADERS</span>
+          <span>MADINA TRADERS & Electric Store</span>
         </div>
       ) : (
         <div
           style={{
             textAlign: "center",
-            fontSize: 40,
+            fontSize: 30,
             fontWeight: "bold",
             color: "green",
           }}
         >
-          <span>MADINA TRADERS</span>
+          <span>MADINA TRADERS & Electric Store</span>
         </div>
       )}
 
@@ -300,11 +300,12 @@ export default function SpanningTable() {
       <Table className="numberedTable" aria-label="spanning table">
         <TableHead>
           <TableRow>
+            <TableCell id="no-print">Sr No.</TableCell>
             <TableCell id="no-print">Item Code</TableCell>
             {/* <TableCell id="no-print">Sr num</TableCell> */}
             <TableCell align="right">Desc</TableCell>
             <TableCell align="right">Price</TableCell>
-            <TableCell align="right">Quantity</TableCell>
+            <TableCell align="right">Qty.</TableCell>
             <TableCell align="right">Disc %</TableCell>
             <TableCell align="right">Disc</TableCell>
             <TableCell align="right">Amount</TableCell>
@@ -316,13 +317,14 @@ export default function SpanningTable() {
             <p>You Have not added any items to the receipt!</p>
           ) : (
             <>
-              {receipt.map((row) => {
+              {receipt.map((row, index) => {
                 // localStorage.setItem(
                 //   "counter",
                 //   JSON.parse(localStorage.getItem("counter")) + 1
                 // );
                 return (
                   <TableRow key={row.itemCode}>
+                    <TableCell id="no-print">{index + 1}</TableCell>
                     <TableCell id="no-print">{row.itemCode}</TableCell>
                     {/* <TableCell id="no-print">
                       {localStorage.getItem("counter")}
@@ -477,7 +479,8 @@ export default function SpanningTable() {
               {customerType === "Installment" ? (
                 <>
                   <TableRow>
-                    <TableCell colSpan={6}>Total</TableCell>
+                    <TableCell colSpan={7}>Total Amount</TableCell>
+
                     <TableCell align="right">{total(receipt)}</TableCell>
 
                     {localStorage.setItem("salePriceTotal", total(receipt))}
@@ -486,7 +489,7 @@ export default function SpanningTable() {
                 </>
               ) : (
                 <TableRow>
-                  <TableCell colSpan={6}>Total</TableCell>
+                  <TableCell colSpan={7}>Total Amount</TableCell>
                   <TableCell align="right">{total(receipt)}</TableCell>
 
                   {localStorage.setItem("salePriceTotal", total(receipt))}
@@ -537,6 +540,7 @@ export default function SpanningTable() {
                       JSON.stringify(localStorage.setItem("costPriceTotal", 0));
                       JSON.stringify(localStorage.setItem("salePriceTotal", 0));
                       setCustomerName("");
+                      window.location.reload();
                     })
                     .catch((err) => console.log(err))
                 : localStorage.getItem("customer_name")
@@ -611,6 +615,7 @@ export default function SpanningTable() {
                       setCustomerAddress("");
                       setCustomerContact("");
                       setCustomerType("Installment");
+                      window.location.reload();
                     })
                     .catch((err) => console.log(err))
                 : localStorage.getItem("customer_name") &&
@@ -684,6 +689,7 @@ export default function SpanningTable() {
                       setCustomerAddress("");
                       setCustomerContact("");
                       setCustomerType("Installment");
+                      window.location.reload();
                     })
                     .catch((err) => console.log(err))
                 : localStorage.getItem("existing_id")

@@ -192,6 +192,7 @@ const AddStock = (props) => {
               .addStock(stockData)
               .then((data) => {
                 console.log(data);
+
                 toast.success("Data added to stock!", {
                   position: toast.POSITION.TOP_CENTER,
                 });
