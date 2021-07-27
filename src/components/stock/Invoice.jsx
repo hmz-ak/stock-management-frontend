@@ -102,49 +102,53 @@ export default function SpanningTable() {
       <div>
         <div style={{ float: "right", margin: 20, paddingRight: 20 }}>
           {customerType == "Existing" ? (
-            <EditText
-              placeholder="Enter Invoice No."
-              onSave={({ value }) => {
-                invoiceService
-                  .getCustomerByInvoice(value)
-                  .then((data) => {
-                    if (data.length != 0) {
-                      // console.log(data[0]._id);
-                      localStorage.setItem("existing_id", data[0]._id);
-                      localStorage.setItem(
-                        "existing_customer_name",
-                        data[0].customerName
-                      );
-                      localStorage.setItem(
-                        "existing_customer_address",
-                        data[0].address
-                      );
-                      localStorage.setItem(
-                        "existing_customer_contact",
-                        data[0].contact
-                      );
-                      setExistingCustomer(data[0].customerName);
-                      setExistingAddress(data[0].address);
-                      setExistingContact(data[0].contact);
-                      // console.log(localStorage.getItem("existing"));
-                    } else {
-                      toast.error("Customer Does Not Exist", {
-                        position: toast.POSITION.TOP_CENTER,
-                      });
-                      setExistingCustomer("");
-                      setExistingAddress("");
-                      setExistingContact("");
-                      localStorage.setItem("existing_id", "");
-                      localStorage.setItem("existing_customer_name", "");
-                      localStorage.setItem("existing_customer_address", "");
-                      localStorage.setItem("existing_customer_contact", "");
-                    }
-                  })
-                  .catch((err) => console.log(err));
-              }}
-              type="number"
-              defaultValue={""}
-            />
+            <>
+              <EditText
+                placeholder="Enter Customer Name"
+                onSave={({ value }) => {
+                  invoiceService
+                    .getCustomerByInvoice(value)
+                    .then((data) => {
+                      if (data.length != 0) {
+                        // console.log(data[0]._id);
+                        localStorage.setItem("existing_id", data[0]._id);
+                        localStorage.setItem(
+                          "existing_customer_name",
+                          data[0].customerName
+                        );
+                        localStorage.setItem(
+                          "existing_customer_address",
+                          data[0].address
+                        );
+                        localStorage.setItem(
+                          "existing_customer_contact",
+                          data[0].contact
+                        );
+                        setExistingCustomer(data[0].customerName);
+                        setExistingAddress(data[0].address);
+                        setExistingContact(data[0].contact);
+                        // console.log(localStorage.getItem("existing"));
+                      } else {
+                        toast.error("Customer Does Not Exist", {
+                          position: toast.POSITION.TOP_CENTER,
+                        });
+                        setExistingCustomer("");
+                        setExistingAddress("");
+                        setExistingContact("");
+                        localStorage.setItem("existing_id", "");
+                        localStorage.setItem("existing_customer_name", "");
+                        localStorage.setItem("existing_customer_address", "");
+                        localStorage.setItem("existing_customer_contact", "");
+                      }
+                    })
+                    .catch((err) => console.log(err));
+                }}
+                type="text"
+                defaultValue={""}
+              />
+              Invoice Number: {invoiceNum + 1}
+              {localStorage.setItem("invoice_num_customer", invoiceNum + 1)}
+            </>
           ) : (
             <>Invoice Number: {invoiceNum + 1}</>
           )}
@@ -645,6 +649,7 @@ export default function SpanningTable() {
                 ? invoiceService
                     .updateInvoiceCustomer(
                       localStorage.getItem("existing_id"),
+
                       {
                         costPriceTotal: JSON.parse(
                           localStorage.getItem("costPriceTotal")

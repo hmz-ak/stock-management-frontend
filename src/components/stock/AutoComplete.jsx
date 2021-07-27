@@ -4,10 +4,19 @@ import TextField from "@material-ui/core/TextField";
 import Autocomplete from "@material-ui/lab/Autocomplete";
 import stockService from "../services/StockService";
 import { toast } from "react-toastify";
+import invoiceService from "../services/InvoiceService";
 
 export default function AutoComplete2() {
+  const [invoiceNum, setInvoiceNum] = React.useState(0);
+
   const [data, setData] = React.useState();
   React.useEffect(() => {
+    invoiceService
+      .getInvoiceNumber()
+      .then((data) => {
+        setInvoiceNum(data.number + 1);
+      })
+      .catch((err) => console.log(err));
     stockService
       .getStock()
       .then((data) => {
@@ -35,6 +44,7 @@ export default function AutoComplete2() {
         cost: row.costPrice,
         date: new Date().getTime() / 1000,
         totalCost: row.costPrice,
+        invoice_id: invoiceNum,
       };
 
       if (localStorage.getItem("receipt") == null) {

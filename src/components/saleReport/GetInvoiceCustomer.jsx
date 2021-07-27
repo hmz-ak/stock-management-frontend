@@ -82,9 +82,6 @@ const GetInvoiceCustomer = (props) => {
   }, []);
   return (
     <TableContainer component={Paper}>
-      <div style={{ float: "right", margin: 20, paddingRight: 20 }}>
-        Invoice Number: {invoice_num}
-      </div>
       <div
         style={{
           textAlign: "center",
@@ -129,6 +126,8 @@ const GetInvoiceCustomer = (props) => {
         <TableHead>
           <TableRow>
             <TableCell align="right">Sr No.</TableCell>
+            <TableCell align="right">Invoice No.</TableCell>
+
             <TableCell align="right">Item Desc</TableCell>
             <TableCell align="right">Date</TableCell>
             <TableCell align="right">Debit</TableCell>
@@ -150,6 +149,7 @@ const GetInvoiceCustomer = (props) => {
               return (
                 <TableRow key={index}>
                   <TableCell align="right">{index + 1}</TableCell>
+                  <TableCell align="right">{row.invoice_id}</TableCell>
 
                   <TableCell align="right">{row.name}</TableCell>
                   <TableCell align="right">
@@ -253,7 +253,14 @@ const GetInvoiceCustomer = (props) => {
       <div style={{ marginTop: 100, marginBottom: 100, fontSize: 24 }}>
         <span style={{ marginLeft: 15 }}>Signature ______________</span>
       </div>
-      <div style={{ marginTop: 100, marginBottom: 70, fontSize: 24 }}>
+      <div
+        style={{
+          marginTop: 100,
+          marginBottom: 70,
+          fontSize: 24,
+          textAlign: "center",
+        }}
+      >
         <span style={{ marginLeft: 15 }}>
           Address : Shop # 5 Model Town, K Block Near PSO Petrol Pump Marian
           Stop Lahore.
