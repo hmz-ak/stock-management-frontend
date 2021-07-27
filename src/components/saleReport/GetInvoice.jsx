@@ -70,9 +70,7 @@ const GetInvoice = (props) => {
   }, []);
   return (
     <TableContainer component={Paper}>
-      <div style={{ float: "right", margin: 20, paddingRight: 20 }}>
-        Invoice Number: {invoice_num}
-      </div>
+      
       <div
         style={{
           textAlign: "center",
@@ -86,12 +84,17 @@ const GetInvoice = (props) => {
       <div style={{ textAlign: "center", fontWeight: "bold" }}>
         <span>Mobile #: 0321-8464465, 03004001431</span>
       </div>
-      <br />
-      <div style={{ fontWeight: "bold", marginLeft: 10 }}>
-        <span>date: {new Date(_date * 1000).toDateString()}</span>
+      <div style={{marginTop:50}}>
+      <div style={{float:"left",paddingLeft:10,margintop:50 }}>
+       # {invoice_num}
+      </div>
       </div>
       <br />
-      <div style={{ marginLeft: 4 }}>
+      <div style={{ fontWeight: "bold", marginLeft: 10,marginTop:20 }}>
+        <span>Date: {new Date(_date * 1000).toDateString()}</span>
+      </div>
+      <br />
+      <div style={{ marginLeft: 10 }}>
         <span>Customer Name : {cname}</span>
       </div>
       <br />
