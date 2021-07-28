@@ -39,11 +39,11 @@ const AddStock = (props) => {
   const [name, setName] = useState("");
   const [costPrice, setCostPrice] = useState(null);
   const [salePrice, setSalePrice] = useState(null);
-  const [rackNumber, setRackNumber] = useState(null);
+  const [rackNumber, setRackNumber] = useState(0);
   const [category, setCategory] = useState(null);
   const [categories, setCategories] = useState([]);
   const [stockQuantity, setQuantity] = useState(null);
-  const [itemCode, setItemCode] = useState(null);
+  const [itemCode, setItemCode] = useState(0);
   const [open, setOpen] = React.useState(false);
 
   const handleChange = (event) => {
@@ -93,10 +93,7 @@ const AddStock = (props) => {
           value={costPrice}
           required
           onChange={(e) => {
-            const re = /^[0-9\b]+$/;
-            if (e.target.value == "" || re.test(e.target.value)) {
-              setCostPrice(e.target.value);
-            }
+            setCostPrice(e.target.value);
           }}
         />
         <br />
@@ -106,10 +103,7 @@ const AddStock = (props) => {
           required
           value={salePrice}
           onChange={(e) => {
-            const re = /^[0-9\b]+$/;
-            if (e.target.value == "" || re.test(e.target.value)) {
-              setSalePrice(e.target.value);
-            }
+            setSalePrice(e.target.value);
           }}
         />{" "}
         <br />

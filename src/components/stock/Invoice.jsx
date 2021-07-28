@@ -343,9 +343,9 @@ export default function SpanningTable() {
 
                           for (let i = 0; i < item.length; i++) {
                             if (row.itemCode == item[i].itemCode) {
-                              item[i].price = parseInt(value);
+                              item[i].price = parseFloat(value);
                               item[i].total =
-                                item[i].quantity * parseInt(value);
+                                item[i].quantity * parseFloat(value);
                               if (row.disc == 0) {
                                 item[i].total =
                                   item[i].quantity * item[i].price;
