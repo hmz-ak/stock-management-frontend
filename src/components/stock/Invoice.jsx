@@ -342,7 +342,7 @@ export default function SpanningTable() {
                           );
 
                           for (let i = 0; i < item.length; i++) {
-                            if (row.itemCode == item[i].itemCode) {
+                            if (row.id == item[i].id) {
                               item[i].price = parseFloat(value);
                               item[i].total =
                                 item[i].quantity * parseFloat(value);
@@ -392,7 +392,7 @@ export default function SpanningTable() {
                             // setReceipt(item);
                           } else {
                             for (let i = 0; i < item.length; i++) {
-                              if (row.itemCode == item[i].itemCode) {
+                              if (row.id == item[i].id) {
                                 item[i].quantity = parseInt(value);
                                 if (row.disc == 0) {
                                   item[i].total =
@@ -429,7 +429,7 @@ export default function SpanningTable() {
                           );
 
                           for (let i = 0; i < item.length; i++) {
-                            if (row.itemCode == item[i].itemCode) {
+                            if (row.id == item[i].id) {
                               console.log(value.value);
                               item[i].disc = parseInt(value.value);
                               item[i].discounted =
