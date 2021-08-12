@@ -70,7 +70,6 @@ const GetInvoice = (props) => {
   }, []);
   return (
     <TableContainer component={Paper}>
-      
       <div
         style={{
           textAlign: "center",
@@ -84,13 +83,13 @@ const GetInvoice = (props) => {
       <div style={{ textAlign: "center", fontWeight: "bold" }}>
         <span>Mobile #: 0321-8464465, 03004001431</span>
       </div>
-      <div style={{marginTop:50}}>
-      <div style={{float:"left",paddingLeft:10,margintop:50 }}>
-       # {invoice_num}
-      </div>
+      <div style={{ marginTop: 50 }}>
+        <div style={{ float: "left", paddingLeft: 10, margintop: 50 }}>
+          # {invoice_num}
+        </div>
       </div>
       <br />
-      <div style={{ fontWeight: "bold", marginLeft: 10,marginTop:20 }}>
+      <div style={{ fontWeight: "bold", marginLeft: 10, marginTop: 20 }}>
         <span>Date: {new Date(_date * 1000).toDateString()}</span>
       </div>
       <br />
@@ -102,6 +101,7 @@ const GetInvoice = (props) => {
       <Table className={classes.table} aria-label="spanning table">
         <TableHead>
           <TableRow>
+            <TableCell>Sr no.</TableCell>
             <TableCell id="no-print">Item Code</TableCell>
             <TableCell align="right">Desc</TableCell>
             <TableCell align="right">Price</TableCell>
@@ -114,21 +114,22 @@ const GetInvoice = (props) => {
         </TableHead>
         <TableBody>
           <>
-            {rows.map((row) => (
-              <TableRow key={row.itemCode}>
+            {rows.map((row, index) => (
+              <TableRow key={index}>
+                <TableCell>{index}</TableCell>
                 <TableCell id="no-print">{row.itemCode}</TableCell>
                 <TableCell align="right">{row.name}</TableCell>
                 <TableCell align="right">{row.price}</TableCell>
                 <TableCell align="right">{row.quantity}</TableCell>
                 <TableCell align="right">{row.disc}</TableCell>
-                <TableCell align="right">{row.discounted}</TableCell>
-                <TableCell align="right">{row.total}</TableCell>
+                <TableCell align="right">{row.discounted.toFixed(2)}</TableCell>
+                <TableCell align="right">{row.total.toFixed(2)}</TableCell>
               </TableRow>
             ))}
 
             <TableRow>
               <TableCell colSpan={6}>Total</TableCell>
-              <TableCell align="right">{total(rows)}</TableCell>
+              <TableCell align="right">{total(rows).toFixed(2)}</TableCell>
             </TableRow>
           </>
         </TableBody>

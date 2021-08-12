@@ -156,18 +156,18 @@ const GetInvoiceCustomer = (props) => {
                     {new Date(row.date * 1000).toDateString()}
                   </TableCell>
                   <TableCell align="right">
-                    {row.credit ? 0 : row.total}
+                    {row.credit ? 0 : row.total.toFixed(2)}
                   </TableCell>
                   <TableCell align="right">
                     {row.credit ? row.credit : 0}
                   </TableCell>
                   {row.credit ? (
                     <TableCell align="right">
-                      {index == 0 ? row.total - row.credit : sum}
+                      {index == 0 ? row.total - row.credit : sum.toFixed(2)}
                     </TableCell>
                   ) : (
                     <TableCell align="right">
-                      {index == 0 ? row.total : sum}
+                      {index == 0 ? row.total.toFixed(2) : sum.toFixed(2)}
                     </TableCell>
                   )}
                 </TableRow>
@@ -206,6 +206,26 @@ const GetInvoiceCustomer = (props) => {
                 />
               </TableCell>
             </TableRow>
+            <TableRow>
+              <TableCell id="no-print" colSpan={6}>
+                Payment Description
+              </TableCell>
+              <TableCell id="no-print" align="right">
+                <EditText
+                  id="customer"
+                  style={{ width: 100 }}
+                  placeholder="Payment Desc."
+                  onSave={({ value }) => {
+                    localStorage.setItem("amount_desc", value);
+                  }}
+                  defaultValue={
+                    localStorage.getItem("amount_desc")
+                      ? localStorage.getItem("amount_desc")
+                      : ""
+                  }
+                />
+              </TableCell>
+            </TableRow>
           </>
         </TableBody>
       </Table>
@@ -231,7 +251,8 @@ const GetInvoiceCustomer = (props) => {
               ? invoiceService
                   .updateSingleCustomer(
                     id,
-                    JSON.parse(localStorage.getItem("amount_receieved"))
+                    JSON.parse(localStorage.getItem("amount_receieved")),
+                    localStorage.getItem("amount_desc")
                   )
                   .then((data) => {
                     console.log(data);
@@ -239,6 +260,8 @@ const GetInvoiceCustomer = (props) => {
                       position: toast.POSITION.TOP_CENTER,
                     });
                     JSON.stringify(localStorage.setItem("amount_receieved", 0));
+                    localStorage.setItem("amount_desc", "");
+
                     window.location.reload();
                   })
                   .catch((err) => console.log(err))

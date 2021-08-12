@@ -12,8 +12,8 @@ class InvoiceService extends GenericService {
   Profit = (data) => this.Data("/sales/profit/", data);
   getSingleInvoice = (id) => this.get("/sales/" + id);
   getSingleCustomer = (id) => this.get("/customers/" + id);
-  updateSingleCustomer = (id, remaining) =>
-    this.put("/customers/" + id, { remaining });
+  updateSingleCustomer = (id, remaining, amount_desc) =>
+    this.put("/customers/" + id, { remaining, amount_desc });
   addInvoice = (costPriceTotal, salePriceTotal, name, data) =>
     this.post("/sales/", { costPriceTotal, salePriceTotal, name, data });
   addInvoiceCustomer = (data) => this.post("/customers/", data);

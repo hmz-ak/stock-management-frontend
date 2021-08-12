@@ -207,7 +207,7 @@ const EditStock = (props) => {
                 toast.success("Updated Successfully", {
                   position: toast.POSITION.TOP_CENTER,
                 });
-                props.history.push("/");
+                props.history.push("/viewStock");
               })
               .catch((err) => {
                 console.log(err.response.data);

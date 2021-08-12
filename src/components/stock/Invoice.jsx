@@ -100,61 +100,7 @@ export default function SpanningTable() {
   return (
     <TableContainer component={Paper}>
       <div>
-        <div style={{ float: "right", margin: 20, paddingRight: 20 }}>
-          {customerType == "Existing" ? (
-            <>
-              <EditText
-                placeholder="Enter Customer Name"
-                onSave={({ value }) => {
-                  invoiceService
-                    .getCustomerByInvoice(value)
-                    .then((data) => {
-                      if (data.length != 0) {
-                        // console.log(data[0]._id);
-                        localStorage.setItem("existing_id", data[0]._id);
-                        localStorage.setItem(
-                          "existing_customer_name",
-                          data[0].customerName
-                        );
-                        localStorage.setItem(
-                          "existing_customer_address",
-                          data[0].address
-                        );
-                        localStorage.setItem(
-                          "existing_customer_contact",
-                          data[0].contact
-                        );
-                        setExistingCustomer(data[0].customerName);
-                        setExistingAddress(data[0].address);
-                        setExistingContact(data[0].contact);
-                        // console.log(localStorage.getItem("existing"));
-                      } else {
-                        toast.error("Customer Does Not Exist", {
-                          position: toast.POSITION.TOP_CENTER,
-                        });
-                        setExistingCustomer("");
-                        setExistingAddress("");
-                        setExistingContact("");
-                        localStorage.setItem("existing_id", "");
-                        localStorage.setItem("existing_customer_name", "");
-                        localStorage.setItem("existing_customer_address", "");
-                        localStorage.setItem("existing_customer_contact", "");
-                      }
-                    })
-                    .catch((err) => console.log(err));
-                }}
-                type="text"
-                defaultValue={""}
-              />
-              Invoice Number: {invoiceNum + 1}
-              {localStorage.setItem("invoice_num_customer", invoiceNum + 1)}
-            </>
-          ) : (
-            <>Invoice Number: {invoiceNum + 1}</>
-          )}
-        </div>
-
-        <FormControl className={classes.formControl}>
+        <FormControl id="no-print" className={classes.formControl}>
           <Select
             labelId="demo-controlled-open-select-label"
             id="demo-controlled-open-select"
@@ -179,7 +125,6 @@ export default function SpanningTable() {
           style={{
             textAlign: "center",
             fontSize: 30,
-            marginLeft: 178,
             fontWeight: "bold",
             color: "green",
           }}
@@ -202,8 +147,65 @@ export default function SpanningTable() {
       <div style={{ textAlign: "center", fontWeight: "bold" }}>
         <span>Mobile #: 0321-8464465, 03004001431</span>
       </div>
+      <div style={{ marginTop: 50 }}>
+        <div style={{ float: "left", paddingLeft: 10, margintop: 50 }}>
+          <div>
+            {customerType == "Existing" ? (
+              <>
+                <EditText
+                  placeholder="Enter Customer Name"
+                  onSave={({ value }) => {
+                    invoiceService
+                      .getCustomerByInvoice(value)
+                      .then((data) => {
+                        if (data.length != 0) {
+                          // console.log(data[0]._id);
+                          localStorage.setItem("existing_id", data[0]._id);
+                          localStorage.setItem(
+                            "existing_customer_name",
+                            data[0].customerName
+                          );
+                          localStorage.setItem(
+                            "existing_customer_address",
+                            data[0].address
+                          );
+                          localStorage.setItem(
+                            "existing_customer_contact",
+                            data[0].contact
+                          );
+                          setExistingCustomer(data[0].customerName);
+                          setExistingAddress(data[0].address);
+                          setExistingContact(data[0].contact);
+                          // console.log(localStorage.getItem("existing"));
+                        } else {
+                          toast.error("Customer Does Not Exist", {
+                            position: toast.POSITION.TOP_CENTER,
+                          });
+                          setExistingCustomer("");
+                          setExistingAddress("");
+                          setExistingContact("");
+                          localStorage.setItem("existing_id", "");
+                          localStorage.setItem("existing_customer_name", "");
+                          localStorage.setItem("existing_customer_address", "");
+                          localStorage.setItem("existing_customer_contact", "");
+                        }
+                      })
+                      .catch((err) => console.log(err));
+                  }}
+                  type="text"
+                  defaultValue={""}
+                />
+                #: {invoiceNum + 1}
+                {localStorage.setItem("invoice_num_customer", invoiceNum + 1)}
+              </>
+            ) : (
+              <>#: {invoiceNum + 1}</>
+            )}
+          </div>
+        </div>
+      </div>
       <br />
-      <div style={{ fontWeight: "bold", marginLeft: 10 }}>
+      <div style={{ marginTop: 50, fontWeight: "bold", marginLeft: 10 }}>
         <span>
           date: {new Date().toDateString()}
           &nbsp;&nbsp;&nbsp;{new Date().toLocaleTimeString()}
@@ -304,10 +306,12 @@ export default function SpanningTable() {
       <Table className="numberedTable" aria-label="spanning table">
         <TableHead>
           <TableRow>
-            <TableCell id="no-print">Sr No.</TableCell>
+            <TableCell>Sr No.</TableCell>
             <TableCell id="no-print">Item Code</TableCell>
             {/* <TableCell id="no-print">Sr num</TableCell> */}
-            <TableCell align="right">Desc</TableCell>
+            <TableCell style={{ width: 250 }} align="left">
+              Desc
+            </TableCell>
             <TableCell align="right">Price</TableCell>
             <TableCell align="right">Qty.</TableCell>
             <TableCell align="right">Disc %</TableCell>
@@ -328,12 +332,14 @@ export default function SpanningTable() {
                 // );
                 return (
                   <TableRow key={row.itemCode}>
-                    <TableCell id="no-print">{index + 1}</TableCell>
+                    <TableCell>{index + 1}</TableCell>
                     <TableCell id="no-print">{row.itemCode}</TableCell>
                     {/* <TableCell id="no-print">
                       {localStorage.getItem("counter")}
                     </TableCell> */}
-                    <TableCell align="right">{row.name}</TableCell>
+                    <TableCell style={{ width: 250 }} align="left">
+                      {row.name}
+                    </TableCell>
                     <TableCell style={{ width: 100 }} align="right">
                       <EditText
                         onSave={({ value }) => {
@@ -447,8 +453,10 @@ export default function SpanningTable() {
                         defaultValue={row.disc}
                       />
                     </TableCell>
-                    <TableCell align="right">{row.discounted}</TableCell>
-                    <TableCell align="right">{row.total}</TableCell>
+                    <TableCell align="right">
+                      {row.discounted.toFixed(2)}
+                    </TableCell>
+                    <TableCell align="right">{row.total.toFixed(2)}</TableCell>
                     <TableCell align="right">
                       <Button
                         onClick={() => {
@@ -485,20 +493,36 @@ export default function SpanningTable() {
                   <TableRow>
                     <TableCell colSpan={7}>Total Amount</TableCell>
 
-                    <TableCell align="right">{total(receipt)}</TableCell>
+                    <TableCell align="right">
+                      {total(receipt).toFixed(2)}
+                    </TableCell>
 
-                    {localStorage.setItem("salePriceTotal", total(receipt))}
+                    {localStorage.setItem(
+                      "salePriceTotal",
+                      total(receipt).toFixed(2)
+                    )}
                     {localStorage.setItem("costPriceTotal", total2(receipt))}
                   </TableRow>
                 </>
               ) : (
                 <TableRow>
                   <TableCell colSpan={7}>Total Amount</TableCell>
-                  <TableCell align="right">{total(receipt)}</TableCell>
+                  <TableCell align="right">
+                    {total(receipt).toFixed(2)}
+                  </TableCell>
 
-                  {localStorage.setItem("salePriceTotal", total(receipt))}
-                  {localStorage.setItem("costPriceTotal", total2(receipt))}
-                  {localStorage.setItem("customer_remaining", total(receipt))}
+                  {localStorage.setItem(
+                    "salePriceTotal",
+                    total(receipt).toFixed(2)
+                  )}
+                  {localStorage.setItem(
+                    "costPriceTotal",
+                    total2(receipt).toFixed(2)
+                  )}
+                  {localStorage.setItem(
+                    "customer_remaining",
+                    total(receipt).toFixed(2)
+                  )}
                 </TableRow>
               )}
             </>
@@ -709,6 +733,22 @@ export default function SpanningTable() {
             Add To Record
           </Button>
         )}
+      </div>
+      <div style={{ marginTop: 100, marginBottom: 100, fontSize: 24 }}>
+        <span style={{ marginLeft: 15 }}>Signature ______________</span>
+      </div>
+      <div
+        style={{
+          marginTop: 100,
+          marginBottom: 70,
+          fontSize: 24,
+          textAlign: "center",
+        }}
+      >
+        <span style={{ marginLeft: 15 }}>
+          Address : Shop # 5 Model Town, K Block Near PSO Petrol Pump Marian
+          Stop Lahore.
+        </span>
       </div>
     </TableContainer>
   );
